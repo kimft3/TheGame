@@ -47,13 +47,14 @@ public class ClientGame extends Application{
 	
 	public static void main(String args[]) throws Exception{
 		
+		clientSocket= new Socket("localhost",12345);//Connections is established, 3 text (send-receive-send)
+		(new ClientThread(clientSocket)).start();
 		
 		
 		
-		BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
-		 clientSocket= new Socket("localhost",12345);//Connections is established, 3 text (send-receive-send)
+		
 		 outToServer = new DataOutputStream(clientSocket.getOutputStream());
-		 BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+		
 			try {
 				outToServer.writeBytes("j"+"#"+"Kurt"+"#"+""+"#"+""+"#"+'\n');
 			} catch (IOException e) {
@@ -62,7 +63,7 @@ public class ClientGame extends Application{
 			
 			launch(args);
 		 while(true) {
-		receiveString = inFromServer.readLine();
+		
 		System.out.println("C Receiving " + receiveString);
 		updateGame(receiveString);
 		 }
