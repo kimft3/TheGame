@@ -6,8 +6,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -45,7 +51,13 @@ public class ClientGame extends Application{
 	static Socket clientSocket;
 	static DataOutputStream outToServer;
 	
+	
 	public static void main(String args[]) throws Exception{
+		
+		String name = JOptionPane.showInputDialog("Enter player name:");
+  
+    System.out.println(name);
+
 		
 		clientSocket= new Socket("localhost",12345);//Connections is established, 3 text (send-receive-send)
 		(new ClientThread(clientSocket)).start();
@@ -56,7 +68,7 @@ public class ClientGame extends Application{
 		 outToServer = new DataOutputStream(clientSocket.getOutputStream());
 		
 			try {
-				outToServer.writeBytes("j"+"#"+"Kurt"+"#"+""+"#"+""+"#"+'\n');
+				outToServer.writeBytes("j"+"#"+name+"#"+""+"#"+""+"#"+'\n');
 			} catch (IOException e) {
 				e.printStackTrace();
 			} 
@@ -156,12 +168,13 @@ public class ClientGame extends Application{
 	}
 	
 	public static void updateGame(String playerInfo) {
-		
     // Setting up standard players
 String[] info=playerInfo.split("#");
+System.out.println(" updateGame "+Arrays.toString(info));
 me = new Player(info[0],Integer.parseInt(info[1]),Integer.parseInt(info[2]),info[3]);
 players.add(me);
-fields[me.getXpos()][me.getYpos()].setGraphic(new ImageView(hero_up));
+Platform.runLater(() -> {
+fields[me.getXpos()][me.getYpos()].setGraphic(new ImageView(hero_up));});
 
 //Player harry = new Player("Harry",p.getX(),p.getY(),"up");
 //players.add(harry);
@@ -172,31 +185,6 @@ fields[me.getXpos()][me.getYpos()].setGraphic(new ImageView(hero_up));
 		
 		
 		
-	}
-	
-	public pair getRandomFreePosition()
-	// finds a random new position which is not wall 
-	// and not occupied by other players 
-	{
-		int x = 1;
-		int y = 1;
-		boolean found = false;
-		while  (!found) {
-			Random r = new Random();
-			x = Math.abs(r.nextInt()%18) +1;
-			y = Math.abs(r.nextInt()%18) +1;
-			if (Generel.board[y].charAt(x)==' ')
-			{
-				found = true;
-				for (Player p: players) {
-					if (p.getXpos()==x && p.getYpos()==y)
-						found = false;
-				}
-				
-			}
-		}
-		pair p = new pair(x,y);
-		return p;
 	}
 	
 	public void movePlayerOnScreen(int oldx,int oldy,int newx,int newy,String direction)

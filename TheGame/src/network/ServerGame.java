@@ -55,10 +55,8 @@ public class ServerGame {
 	
 	public static boolean isNameUnique(String name) {
 		for(Player p:players) {
-			if(p.getName().equals(name))
-				
-				return false;
-		}
+			if(p.getName().equals(name))				
+				return false;		}
 		return true;
 	}
 	

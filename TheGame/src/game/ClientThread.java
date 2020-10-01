@@ -18,7 +18,8 @@ public void run() {
 	while(true) {
 	try {
 		 BufferedReader inFromServer = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
-		 System.out.println(inFromServer.readLine());
+//		 System.out.println(inFromServer.readLine());
+		 ClientGame.updateGame(inFromServer.readLine());
 	} catch (Exception e) {
 		// TODO: handle exception
 	}
@@ -26,3 +27,4 @@ public void run() {
 }	
 
 }
+// Sende til clientGame
