@@ -37,7 +37,7 @@ public class ClientGame extends Application{
 	public static Player me;
 	public static List<Player> players = new ArrayList<Player>();
 
-	private Label[][] fields;
+	private static Label[][] fields;
 	private TextArea scoreList;
 	static String sendString="";
 	static String receiveString="";
@@ -47,7 +47,7 @@ public class ClientGame extends Application{
 	
 	public static void main(String args[]) throws Exception{
 		
-		launch(args);
+		
 		
 		
 		BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
@@ -59,16 +59,19 @@ public class ClientGame extends Application{
 			} catch (IOException e) {
 				e.printStackTrace();
 			} 
+			
+			launch(args);
 		 while(true) {
 		receiveString = inFromServer.readLine();
 		System.out.println("C Receiving " + receiveString);
+		updateGame(receiveString);
 		 }
 		
 		
 		
 		
 		
-		
+			
 		
 //		clientSocket.close();// 2 text, send-receive
 	
@@ -145,22 +148,29 @@ public class ClientGame extends Application{
 				default: break;
 				}
 			});
-			
-            // Setting up standard players
-			pair p=getRandomFreePosition();
-			me = new Player("Orville",p.getX(),p.getY(),"up");
-			players.add(me);
-			fields[p.getX()][p.getY()].setGraphic(new ImageView(hero_up));
-
-			p=getRandomFreePosition();
-			Player harry = new Player("Harry",p.getX(),p.getY(),"up");
-			players.add(harry);
-			fields[p.getX()][p.getY()].setGraphic(new ImageView(hero_up));
-
-			scoreList.setText(getScoreList());
+		
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void updateGame(String playerInfo) {
+		
+    // Setting up standard players
+String[] info=playerInfo.split("#");
+me = new Player(info[0],Integer.parseInt(info[1]),Integer.parseInt(info[2]),info[3]);
+players.add(me);
+fields[me.getXpos()][me.getYpos()].setGraphic(new ImageView(hero_up));
+
+//Player harry = new Player("Harry",p.getX(),p.getY(),"up");
+//players.add(harry);
+//fields[p.getX()][p.getY()].setGraphic(new ImageView(hero_up));
+//
+//scoreList.setText(getScoreList());
+		
+		
+		
+		
 	}
 	
 	public pair getRandomFreePosition()
