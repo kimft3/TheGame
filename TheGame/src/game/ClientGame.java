@@ -1,4 +1,4 @@
-package network;
+package game;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -9,9 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import game.Generel;
-import game.Player;
-import game.pair;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -50,43 +47,22 @@ public class ClientGame extends Application{
 	
 	public static void main(String args[]) throws Exception{
 		
-//		launch(args);
+		launch(args);
 		
 		
 		BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
 		 clientSocket= new Socket("localhost",12345);//Connections is established, 3 text (send-receive-send)
 		 outToServer = new DataOutputStream(clientSocket.getOutputStream());
 		 BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-		
-		System.out.println("er du ok");
-//		 sendString ="j"+"#"+me.getName()+"#"+""+"#"+""+"#"+""+ '\n';
 			try {
-				outToServer.writeBytes("j"+"#"+"erter"+"#"+""+"#"+""+"#"+'\n');
+				outToServer.writeBytes("j"+"#"+"Kurt"+"#"+""+"#"+""+"#"+'\n');
 			} catch (IOException e) {
 				e.printStackTrace();
 			} 
-		 
-		 
-		
-		
-		
-		
-		
-//			System.out.println("Client, Hvad vil du skrive");
-//			sendString = inFromUser.readLine();
-//			System.out.println("C sending "+sendString);
-		
-		
-		
-		
-		
-//		outToServer.writeBytes("jlocalhost HeldOgLykke" + '\n');
-		
-		
-		
-		
+		 while(true) {
 		receiveString = inFromServer.readLine();
 		System.out.println("C Receiving " + receiveString);
+		 }
 		
 		
 		
@@ -94,8 +70,7 @@ public class ClientGame extends Application{
 		
 		
 		
-		
-		clientSocket.close();// 2 text, send-receive
+//		clientSocket.close();// 2 text, send-receive
 	
 	}
 	

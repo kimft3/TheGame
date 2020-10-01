@@ -2,6 +2,7 @@ package network;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -12,25 +13,21 @@ import java.util.Random;
 import game.Generel;
 import game.Player;
 import game.pair;
-import javafx.scene.image.ImageView;
-
 public class ServerGame {
 	
 	public static List<Player> players = new ArrayList<Player>();
-	public static ArrayList<Socket> playerSockets=new ArrayList<>();
+	public static ArrayList<Socket> playerSockets=new ArrayList<>(); // evt ændre til DataOutputStream-------------------------
 	
 
 	@SuppressWarnings("resource")
 	public static void main(String[] args) throws Exception {
 		String receiveString="", sendString="", playerName="";
 		ServerSocket talk=new ServerSocket(12345);
-		BufferedReader replyText = new BufferedReader(new InputStreamReader(System.in));
-		
 		while (true) {
 			System.out.println("hejsa");
 			Socket connectionSocket = talk.accept();
 			
-			playerSockets.add(connectionSocket);
+			
 			
 			BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
 			DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());	
@@ -50,10 +47,12 @@ public class ServerGame {
 						
 					}			
 					// Setting up standard players
+						playerSockets.add(connectionSocket);
 						pair p=getRandomFreePosition();					
 						players.add(new Player(playerName,p.getX(),p.getY(),"up"));
-					System.out.println("opretter ");
-					break;
+						System.out.println("opretter ");
+						sendGameUpdate();
+						break;
 //				case m:
 					
 			}
@@ -70,13 +69,31 @@ public class ServerGame {
 			
 				System.out.println("S receiving "+receiveString);
 				System.out.println("Server, Hvad vil du svare ");
-			sendString = replyText.readLine() + '\n';
+		
 			System.out.println(" S sending "+sendString);
 			
 			outToClient.writeBytes(sendString);
 	
 		
 		
+		}
+	}
+	
+	public static void sendGameUpdate() {
+		for(Socket s: playerSockets) {
+			try {
+				DataOutputStream outToClient = new DataOutputStream(s.getOutputStream());
+				String playerData="";
+				for(Player p:players) {
+					playerData=p.getName()+"#"+p.getXpos()+"#"+p.getYpos()+"#"+p.getDirection();
+					System.out.println("S "+playerData+'\n');
+					outToClient.writeBytes(playerData+'\n');
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
 	}
 	
