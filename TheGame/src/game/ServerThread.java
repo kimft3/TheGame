@@ -25,6 +25,8 @@ public class ServerThread extends Thread {
 			while(true) {
 			BufferedReader inFromClient = new BufferedReader(new InputStreamReader(serverReceiverSocket.getInputStream()));
 			receiveString = inFromClient.readLine(); //join
+			System.out.println("st "+receiveString);
+			play();
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
