@@ -161,7 +161,7 @@ public class ClientGame extends Application {
 		}
 	}
 
-	public static void flytterundt(int oldx, int oldy, int newx, int newy, String direction) {
+	public static synchronized void flytterundt(int oldx, int oldy, int newx, int newy, String direction) {
 
 		if (oldx > 0 && oldy > 0) {
 			Platform.runLater(() -> {

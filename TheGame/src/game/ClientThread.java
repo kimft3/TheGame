@@ -23,19 +23,19 @@ public class ClientThread extends Thread {
 //		 System.out.println(inFromServer.readLine());
 // playerData=p.getName()+"#"+p.getPoint()+"#"+p.getXposOld()+"#"+p.getYposOld()+"#"+p.getXpos()+"#"+p.getYpos()+"#"+p.getDirection();
 				playerInfo = inFromServer.readLine().split("#");
+				crit();
 				wait();
-				ClientGame.flytterundt(Integer.parseInt(playerInfo[2]), Integer.parseInt(playerInfo[3]),
-						Integer.parseInt(playerInfo[4]), Integer.parseInt(playerInfo[5]), playerInfo[6]);
-				ClientGame.updateScore(playerInfo[0], playerInfo[1]);
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
-			notifyAll();
 		}
 	}
 
 	public synchronized void crit() {
-
+		ClientGame.flytterundt(Integer.parseInt(playerInfo[2]), Integer.parseInt(playerInfo[3]),
+				Integer.parseInt(playerInfo[4]), Integer.parseInt(playerInfo[5]), playerInfo[6]);
+		ClientGame.updateScore(playerInfo[0], playerInfo[1]);
+		notify();
 	}
 
 }
