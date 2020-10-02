@@ -4,9 +4,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import javax.swing.JOptionPane;
+import java.util.Map.Entry;
 
+import javax.swing.JOptionPane;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -23,74 +25,63 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class ClientGame extends Application{
+public class ClientGame extends Application {
 
-	public static final int size = 30; 
+	public static final int size = 30;
 	public static final int scene_height = size * 20 + 50;
 	public static final int scene_width = size * 20 + 200;
 
 	public static Image image_floor;
 	public static Image image_wall;
-	public static Image hero_right,hero_left,hero_up,hero_down;
+	public static Image hero_right, hero_left, hero_up, hero_down;
 
 	public static List<Player> players = new ArrayList<Player>();
 //	public static Player me;
 	static String name;
 
 	private static Label[][] fields;
-	private TextArea scoreList;
-	static String sendString="";
-	static String receiveString="";
-	
+	private static TextArea scoreList;
+	static String sendString = "";
+	static String receiveString = "";
+
 	static Socket clientSocket;
 	static DataOutputStream outToServer;
-	
-	
-	public static void main(String args[]) throws Exception{
-		
-		 name = JOptionPane.showInputDialog("Enter player name:");
-  
-    System.out.println(name);
 
-		
-		clientSocket= new Socket("localhost",12345);//Connections is established, 3 text (send-receive-send)
+	static HashMap<String, String> playerScore = new HashMap<>();
+
+	public static void main(String args[]) throws Exception {
+
+		name = JOptionPane.showInputDialog("Enter player name:");
+
+		System.out.println(name);
+
+		clientSocket = new Socket("localhost", 12345);// Connections is established, 3 text (send-receive-send)
 		(new ClientThread(clientSocket)).start();
-		
-		
-		
-		
-		 outToServer = new DataOutputStream(clientSocket.getOutputStream());
-		
-			try {
-				outToServer.writeBytes("j"+"#"+name+"#"+""+"#"+""+"#"+'\n');
-			} catch (IOException e) {
-				e.printStackTrace();
-			} 
-			
-			launch(args);
-		 while(true) {
-		
+
+		outToServer = new DataOutputStream(clientSocket.getOutputStream());
+
+		try {
+			outToServer.writeBytes("j" + "#" + name + "#" + "" + "#" + "" + "#" + '\n');
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		launch(args);
+		while (true) {
+
 //		System.out.println("C Receiving " + receiveString);
 //		updateGame(receiveString);
-		 }
-		
-		
-		
-		
-		
-			
-		
+		}
+
 //		clientSocket.close();// 2 text, send-receive
-	
+
 	}
-	
-	
 
 	// -------------------------------------------
-	// | Maze: (0,0)              | Score: (1,0) |
+	// | Maze: (0,0) | Score: (1,0) |
 	// |-----------------------------------------|
-	// | boardGrid (0,1)          | scorelist    |
-	// |                          | (1,1)        |
+	// | boardGrid (0,1) | scorelist |
+	// | | (1,1) |
 	// -------------------------------------------
 
 	@Override
@@ -103,117 +94,109 @@ public class ClientGame extends Application{
 
 			Text mazeLabel = new Text("Maze:");
 			mazeLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-	
+
 			Text scoreLabel = new Text("Score:");
 			scoreLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
 
 			scoreList = new TextArea();
-			
+
 			GridPane boardGrid = new GridPane();
 
-			image_wall  = new Image(getClass().getResourceAsStream("Image/wall4.png"),size,size,false,false);
-			image_floor = new Image(getClass().getResourceAsStream("Image/floor1.png"),size,size,false,false);
+			image_wall = new Image(getClass().getResourceAsStream("Image/wall4.png"), size, size, false, false);
+			image_floor = new Image(getClass().getResourceAsStream("Image/floor1.png"), size, size, false, false);
 
-			hero_right  = new Image(getClass().getResourceAsStream("Image/heroRight.png"),size,size,false,false);
-			hero_left   = new Image(getClass().getResourceAsStream("Image/heroLeft.png"),size,size,false,false);
-			hero_up     = new Image(getClass().getResourceAsStream("Image/heroUp.png"),size,size,false,false);
-			hero_down   = new Image(getClass().getResourceAsStream("Image/heroDown.png"),size,size,false,false);
+			hero_right = new Image(getClass().getResourceAsStream("Image/heroRight.png"), size, size, false, false);
+			hero_left = new Image(getClass().getResourceAsStream("Image/heroLeft.png"), size, size, false, false);
+			hero_up = new Image(getClass().getResourceAsStream("Image/heroUp.png"), size, size, false, false);
+			hero_down = new Image(getClass().getResourceAsStream("Image/heroDown.png"), size, size, false, false);
 
 			fields = new Label[20][20];
-			for (int j=0; j<20; j++) {
-				for (int i=0; i<20; i++) {
+			for (int j = 0; j < 20; j++) {
+				for (int i = 0; i < 20; i++) {
 					switch (Generel.board[j].charAt(i)) {
 					case 'w':
 						fields[i][j] = new Label("", new ImageView(image_wall));
 						break;
-					case ' ':					
+					case ' ':
 						fields[i][j] = new Label("", new ImageView(image_floor));
 						break;
-					default: throw new Exception("Illegal field value: "+Generel.board[j].charAt(i) );
+					default:
+						throw new Exception("Illegal field value: " + Generel.board[j].charAt(i));
 					}
 					boardGrid.add(fields[i][j], i, j);
 				}
 			}
 			scoreList.setEditable(false);
-			
-			
-			grid.add(mazeLabel,  0, 0); 
-			grid.add(scoreLabel, 1, 0); 
-			grid.add(boardGrid,  0, 1);
-			grid.add(scoreList,  1, 1);
-						
-			Scene scene = new Scene(grid,scene_width,scene_height);
+
+			grid.add(mazeLabel, 0, 0);
+			grid.add(scoreLabel, 1, 0);
+			grid.add(boardGrid, 0, 1);
+			grid.add(scoreList, 1, 1);
+
+			Scene scene = new Scene(grid, scene_width, scene_height);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 
 			scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
 				switch (event.getCode()) {
-				case UP:    playerMoved(0,-1,"up");    break;
-				case DOWN:  playerMoved(0,+1,"down");  break;
-				case LEFT:  playerMoved(-1,0,"left");  break;
-				case RIGHT: playerMoved(+1,0,"right"); break;
-				default: break;
+				case UP:
+					playerMoved(0, -1, "up");
+					break;
+				case DOWN:
+					playerMoved(0, +1, "down");
+					break;
+				case LEFT:
+					playerMoved(-1, 0, "left");
+					break;
+				case RIGHT:
+					playerMoved(+1, 0, "right");
+					break;
+				default:
+					break;
 				}
 			});
-		
-		} catch(Exception e) {
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-//	
-//	public static void updateGame(String playerInfo) {
-//    // Setting up standard players
-//String[] info=playerInfo.split("#");
-//System.out.println(" updateGame "+Arrays.toString(info));
-//me = new Player(info[0],Integer.parseInt(info[1]),Integer.parseInt(info[2]),info[3]);
-//players.add(me);
-//Platform.runLater(() -> {
-//fields[me.getXpos()][me.getYpos()].setGraphic(new ImageView(hero_up));});
-//
-////Player harry = new Player("Harry",p.getX(),p.getY(),"up");
-////players.add(harry);
-////fields[p.getX()][p.getY()].setGraphic(new ImageView(hero_up));
-////
-////scoreList.setText(getScoreList());
-//		
-//		
-//		
-//		
-//	}
-//	
-	public static void flytterundt(int oldx,int oldy,int newx,int newy,String direction)
-	{
-		
-		if(oldx>0&&oldy>0) {
+
+	public static void flytterundt(int oldx, int oldy, int newx, int newy, String direction) {
+
+		if (oldx > 0 && oldy > 0) {
+			Platform.runLater(() -> {
+				fields[oldx][oldy].setGraphic(new ImageView(image_floor));
+			});
+		}
 		Platform.runLater(() -> {
-			fields[oldx][oldy].setGraphic(new ImageView(image_floor));
-			});}
-      		Platform.runLater(() -> {	
 			if (direction.equals("right")) {
 				fields[newx][newy].setGraphic(new ImageView(hero_right));
-			};
+			}
+			;
 			if (direction.equals("left")) {
 				fields[newx][newy].setGraphic(new ImageView(hero_left));
-			};
+			}
+			;
 			if (direction.equals("up")) {
 				fields[newx][newy].setGraphic(new ImageView(hero_up));
-			};
+			}
+			;
 			if (direction.equals("down")) {
 				fields[newx][newy].setGraphic(new ImageView(hero_down));
-			};
-			});
+			}
+			;
+		});
 
-		
 	}
-	
-//	public void updateScoreTable()
-//	{
-//		Platform.runLater(() -> {
-//			scoreList.setText(getScoreList());
-//			});
-//	}
+
+	public static void updateScoreTable() {
+		Platform.runLater(() -> {
+			scoreList.setText(getScoreList());
+		});
+	}
+
 	public void playerMoved(int delta_x, int delta_y, String direction) {
-		sendString ="m"+"#"+name+"#"+delta_x+"#"+delta_y+"#"+direction + '\n';
+		sendString = "m" + "#" + name + "#" + delta_x + "#" + delta_y + "#" + direction + '\n';
 		System.out.println(sendString);
 		try {
 			outToServer.writeBytes(sendString);
@@ -221,24 +204,31 @@ public class ClientGame extends Application{
 			e.printStackTrace();
 		}
 	}
-	
-//	public String getScoreList() {
-//		StringBuffer b = new StringBuffer(100);
-//		for (Player p : players) {
-//			b.append(p+"\r\n");
-//		}
-//		return b.toString();
-//	}
-//
+
+	public static String getScoreList() {
+		StringBuffer b = new StringBuffer(100);
+		for (Entry<String, String> entry : playerScore.entrySet()) {
+			b.append(entry + "\r\n");
+		}
+		return b.toString();
+	}
+
 //	public Player getPlayerAt(int x, int y) {
 //		for (Player p : players) {
-//			if (p.getXpos()==x && p.getYpos()==y) {
+//			if (p.getXpos() == x && p.getYpos() == y) {
 //				return p;
 //			}
 //		}
 //		return null;
 //	}
-		
+
+	public static void updateScore(String name, String score) {
+		if (!playerScore.containsKey(name)) {
+			playerScore.put(name, score);
+		} else {
+			playerScore.replace(name, score);
+		}
+		updateScoreTable();
+	}
+
 }
-
-
