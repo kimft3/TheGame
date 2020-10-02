@@ -19,9 +19,11 @@ public class ServerGame {
 	public static ArrayList<Socket> playerSockets = new ArrayList<>(); // evt �ndre til
 																		// DataOutputStream-------------------------
 
+	public static String playerName = "";
+
 	@SuppressWarnings("resource")
 	public static void main(String[] args) throws Exception {
-		String receiveString = "", sendString = "", playerName = "";
+		String receiveString = "", sendString = "";
 		ServerSocket talk = new ServerSocket(12345);
 		while (true) {
 			Socket connectionSocket = talk.accept();
@@ -62,7 +64,7 @@ public class ServerGame {
 	public static void play(String receiveString, Socket serverReceiverSocket) {
 		System.out.println("ServerThread " + receiveString);
 		String[] playerMessage = receiveString.split("#");
-		String playerName = playerName = playerMessage[1];
+		playerName = playerMessage[1];
 
 		char id = playerMessage[0].charAt(0);
 		switch (id) {

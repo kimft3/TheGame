@@ -15,7 +15,7 @@ public class ClientThread extends Thread {
 	}
 
 	@Override
-	public synchronized void run() {
+	public void run() {
 		System.out.println("23456");
 		while (true) {
 			try {
@@ -31,9 +31,11 @@ public class ClientThread extends Thread {
 	}
 
 	public synchronized void crit() throws InterruptedException {
+		wait(100);
 		ClientGame.flytterundt(Integer.parseInt(playerInfo[2]), Integer.parseInt(playerInfo[3]),
 				Integer.parseInt(playerInfo[4]), Integer.parseInt(playerInfo[5]), playerInfo[6]);
 		ClientGame.updateScore(playerInfo[0], playerInfo[1]);
+		notify();
 	}
 
 }

@@ -221,7 +221,7 @@ public class ClientGame extends Application {
 //		return null;
 //	}
 
-	public static synchronized void updateScore(String name, String score) {
+	public static void updateScore(String name, String score) {
 		if (!playerScore.containsKey(name)) {
 			playerScore.put(name, score);
 		} else {
