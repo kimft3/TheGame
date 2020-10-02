@@ -33,7 +33,8 @@ public class ClientGame extends Application{
 	public static Image image_wall;
 	public static Image hero_right,hero_left,hero_up,hero_down;
 
-	public static Player me;
+	public static List<Player> players = new ArrayList<Player>();
+//	public static Player me;
 	static String name;
 
 	private static Label[][] fields;
