@@ -3,9 +3,7 @@ package game;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map.Entry;
 
 import javax.swing.JOptionPane;
@@ -35,7 +33,7 @@ public class ClientGame extends Application {
 	public static Image image_wall;
 	public static Image hero_right, hero_left, hero_up, hero_down;
 
-	public static List<Player> players = new ArrayList<Player>();
+//	public static List<Player> players = new ArrayList<Player>();
 //	public static Player me;
 	static String name;
 
@@ -162,7 +160,8 @@ public class ClientGame extends Application {
 	}
 
 	public static synchronized void flytterundt(int oldx, int oldy, int newx, int newy, String direction) {
-
+//		for (int i = 0; i < 1000000; i++) {
+//		}
 		if (oldx > 0 && oldy > 0) {
 			Platform.runLater(() -> {
 				fields[oldx][oldy].setGraphic(new ImageView(image_floor));
