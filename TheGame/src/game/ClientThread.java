@@ -19,7 +19,9 @@ public void run() {
 	try {
 		 BufferedReader inFromServer = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
 //		 System.out.println(inFromServer.readLine());
-		 ClientGame.updateGame(inFromServer.readLine());
+// playerData=p.getName()+"#"+p.getPoint()+"#"+p.getXposOld()+"#"+p.getYposOld()+"#"+p.getXpos()+"#"+p.getYpos()+"#"+p.getDirection();
+		 String[] playerInfo=inFromServer.readLine().split("#");
+		 ClientGame.flytterundt(Integer.parseInt(playerInfo[2]),Integer.parseInt(playerInfo[3]),Integer.parseInt(playerInfo[4]),Integer.parseInt(playerInfo[5]),playerInfo[6]);
 	} catch (Exception e) {
 		// TODO: handle exception
 	}
@@ -27,4 +29,3 @@ public void run() {
 }	
 
 }
-// Sende til clientGame

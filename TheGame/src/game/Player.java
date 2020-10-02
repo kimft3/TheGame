@@ -7,6 +7,9 @@ public class Player {
 	int point;
 	String direction;
 	
+	int xposOld=-1;
+	int yposOld=-1;
+	
 
 	public Player(String name, int xpos, int ypos, String direction) {
 		this.name = name;
@@ -15,18 +18,29 @@ public class Player {
 		this.direction = direction;
 		this.point = 0;
 	}
+	public int getXposOld() {
+		return xposOld;
+	}
+	public int getYposOld() {
+		return yposOld;
+	}
+	public int getPoint() {
+		return point;
+	}
 	
 
 	public int getXpos() {
 		return xpos;
 	}
 	public void setXpos(int xpos) {
+		this.xposOld=this.xpos;
 		this.xpos = xpos;
 	}
 	public int getYpos() {
 		return ypos;
 	}
 	public void setYpos(int ypos) {
+		this.yposOld=this.ypos;
 		this.ypos = ypos;
 	}
 	public String getDirection() {

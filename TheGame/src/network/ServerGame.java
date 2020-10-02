@@ -41,7 +41,7 @@ public class ServerGame {
 				DataOutputStream outToClient = new DataOutputStream(s.getOutputStream());
 				String playerData="";
 				for(Player p:players) {
-					playerData=p.getName()+"#"+p.getXpos()+"#"+p.getYpos()+"#"+p.getDirection();
+					playerData=p.getName()+"#"+p.getPoint()+"#"+p.getXposOld()+"#"+p.getYposOld()+"#"+p.getXpos()+"#"+p.getYpos()+"#"+p.getDirection();
 					System.out.println("S "+playerData+'\n');
 					outToClient.writeBytes(playerData+'\n');
 				}

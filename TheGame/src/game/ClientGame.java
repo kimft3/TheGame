@@ -1,19 +1,12 @@
 package game;
 
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
-
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -41,7 +34,7 @@ public class ClientGame extends Application{
 	public static Image hero_right,hero_left,hero_up,hero_down;
 
 	public static Player me;
-	public static List<Player> players = new ArrayList<Player>();
+	static String name;
 
 	private static Label[][] fields;
 	private TextArea scoreList;
@@ -54,7 +47,7 @@ public class ClientGame extends Application{
 	
 	public static void main(String args[]) throws Exception{
 		
-		String name = JOptionPane.showInputDialog("Enter player name:");
+		 name = JOptionPane.showInputDialog("Enter player name:");
   
     System.out.println(name);
 
@@ -76,8 +69,8 @@ public class ClientGame extends Application{
 			launch(args);
 		 while(true) {
 		
-		System.out.println("C Receiving " + receiveString);
-		updateGame(receiveString);
+//		System.out.println("C Receiving " + receiveString);
+//		updateGame(receiveString);
 		 }
 		
 		
@@ -166,32 +159,34 @@ public class ClientGame extends Application{
 			e.printStackTrace();
 		}
 	}
-	
-	public static void updateGame(String playerInfo) {
-    // Setting up standard players
-String[] info=playerInfo.split("#");
-System.out.println(" updateGame "+Arrays.toString(info));
-me = new Player(info[0],Integer.parseInt(info[1]),Integer.parseInt(info[2]),info[3]);
-players.add(me);
-Platform.runLater(() -> {
-fields[me.getXpos()][me.getYpos()].setGraphic(new ImageView(hero_up));});
-
-//Player harry = new Player("Harry",p.getX(),p.getY(),"up");
-//players.add(harry);
-//fields[p.getX()][p.getY()].setGraphic(new ImageView(hero_up));
+//	
+//	public static void updateGame(String playerInfo) {
+//    // Setting up standard players
+//String[] info=playerInfo.split("#");
+//System.out.println(" updateGame "+Arrays.toString(info));
+//me = new Player(info[0],Integer.parseInt(info[1]),Integer.parseInt(info[2]),info[3]);
+//players.add(me);
+//Platform.runLater(() -> {
+//fields[me.getXpos()][me.getYpos()].setGraphic(new ImageView(hero_up));});
 //
-//scoreList.setText(getScoreList());
-		
-		
-		
-		
-	}
-	
-	public void movePlayerOnScreen(int oldx,int oldy,int newx,int newy,String direction)
+////Player harry = new Player("Harry",p.getX(),p.getY(),"up");
+////players.add(harry);
+////fields[p.getX()][p.getY()].setGraphic(new ImageView(hero_up));
+////
+////scoreList.setText(getScoreList());
+//		
+//		
+//		
+//		
+//	}
+//	
+	public static void flytterundt(int oldx,int oldy,int newx,int newy,String direction)
 	{
+		
+		if(oldx>0&&oldy>0) {
 		Platform.runLater(() -> {
 			fields[oldx][oldy].setGraphic(new ImageView(image_floor));
-			});
+			});}
       		Platform.runLater(() -> {	
 			if (direction.equals("right")) {
 				fields[newx][newy].setGraphic(new ImageView(hero_right));
@@ -210,14 +205,15 @@ fields[me.getXpos()][me.getYpos()].setGraphic(new ImageView(hero_up));});
 		
 	}
 	
-	public void updateScoreTable()
-	{
-		Platform.runLater(() -> {
-			scoreList.setText(getScoreList());
-			});
-	}
+//	public void updateScoreTable()
+//	{
+//		Platform.runLater(() -> {
+//			scoreList.setText(getScoreList());
+//			});
+//	}
 	public void playerMoved(int delta_x, int delta_y, String direction) {
-		sendString ="m"+"#"+me.getName()+"#"+delta_x+"#"+delta_y+"#"+direction + '\n';
+		sendString ="m"+"#"+name+"#"+delta_x+"#"+delta_y+"#"+direction + '\n';
+		System.out.println(sendString);
 		try {
 			outToServer.writeBytes(sendString);
 		} catch (IOException e) {
@@ -225,22 +221,22 @@ fields[me.getXpos()][me.getYpos()].setGraphic(new ImageView(hero_up));});
 		}
 	}
 	
-	public String getScoreList() {
-		StringBuffer b = new StringBuffer(100);
-		for (Player p : players) {
-			b.append(p+"\r\n");
-		}
-		return b.toString();
-	}
-
-	public Player getPlayerAt(int x, int y) {
-		for (Player p : players) {
-			if (p.getXpos()==x && p.getYpos()==y) {
-				return p;
-			}
-		}
-		return null;
-	}
+//	public String getScoreList() {
+//		StringBuffer b = new StringBuffer(100);
+//		for (Player p : players) {
+//			b.append(p+"\r\n");
+//		}
+//		return b.toString();
+//	}
+//
+//	public Player getPlayerAt(int x, int y) {
+//		for (Player p : players) {
+//			if (p.getXpos()==x && p.getYpos()==y) {
+//				return p;
+//			}
+//		}
+//		return null;
+//	}
 		
 }
 

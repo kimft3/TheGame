@@ -38,7 +38,7 @@ public class ServerThread extends Thread {
 	}
 	
 	public void play() {
-		System.out.println(receiveString);
+		System.out.println("ServerThread "+receiveString);
 		String[] playerMessage=receiveString.split("#");
 		char id=playerMessage[0].charAt(0);
 		switch(id) {
