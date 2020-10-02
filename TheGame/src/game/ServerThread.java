@@ -60,9 +60,17 @@ public class ServerThread extends Thread {
 					ServerGame.players.add(new Player(playerName,p.getX(),p.getY(),"up"));
 					System.out.println("opretter ");
 					ServerGame.sendGameUpdate();
-					break;
-//			case m:
+			break;
+			case 'm':
+				for(Player pl: ServerGame.players) {
+					if(pl.getName().equals(playerMessage[1])) {
+						updatePlayer(pl,Integer.parseInt(playerMessage[2]),Integer.parseInt(playerMessage[3]),playerMessage[4]);	
+					}
+				}
 				
+				
+				
+				break;
 		}
 		
 	}
@@ -92,6 +100,45 @@ public class ServerThread extends Thread {
 	}
 	
 	
+	public void updatePlayer(Player me,int delta_x, int delta_y, String direction)
+	{
+		
+		me.direction = direction;
+		int x = me.getXpos(),y = me.getYpos();
+
+		if (Generel.board[y+delta_y].charAt(x+delta_x)=='w') {
+			me.addPoints(-1);
+		} 
+		else {
+			// prepared for collision detection
+			// not quite relevant in single plaver version		
+			Player p = getPlayerAt(x+delta_x,y+delta_y);
+			if (p!=null) {
+              me.addPoints(10);
+              //update the other player
+              p.addPoints(-10);
+              pair pa = getRandomFreePosition();
+              p.xpos=pa.getX();
+              p.ypos=pa.getY();
+ //             movePlayerOnScreen(x+delta_x,y+delta_y,pa.getX(),pa.getY(),p.direction);
+			} else 
+				me.addPoints(1);
+//			movePlayerOnScreen(x,y,x+delta_x,y+delta_y,direction);
+			me.setXpos(x+delta_x);
+			me.setYpos(y+delta_y);
+			ServerGame.sendGameUpdate();
+		}
+		
+	}
+	
+	public Player getPlayerAt(int x, int y) {
+		for (Player p : ServerGame.players) {
+			if (p.getXpos()==x && p.getYpos()==y) {
+				return p;
+			}
+		}
+		return null;
+	}
 	
 	
 	
