@@ -149,8 +149,9 @@ public class ServerGame {
 //			movePlayerOnScreen(x,y,x+delta_x,y+delta_y,direction);
 			me.setXpos(x + delta_x);
 			me.setYpos(y + delta_y);
-			ServerGame.sendGameUpdate();
+
 		}
+		ServerGame.sendGameUpdate();
 
 	}
 

@@ -188,7 +188,7 @@ public class ClientGame extends Application {
 
 	}
 
-	public static void updateScoreTable() {
+	public static synchronized void updateScoreTable() {
 		Platform.runLater(() -> {
 			scoreList.setText(getScoreList());
 		});
@@ -204,7 +204,7 @@ public class ClientGame extends Application {
 		}
 	}
 
-	public static String getScoreList() {
+	public static synchronized String getScoreList() {
 		StringBuffer b = new StringBuffer(100);
 		for (Entry<String, String> entry : playerScore.entrySet()) {
 			b.append(entry + "\r\n");
@@ -221,7 +221,7 @@ public class ClientGame extends Application {
 //		return null;
 //	}
 
-	public static void updateScore(String name, String score) {
+	public static synchronized void updateScore(String name, String score) {
 		if (!playerScore.containsKey(name)) {
 			playerScore.put(name, score);
 		} else {

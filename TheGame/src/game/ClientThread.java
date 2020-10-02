@@ -31,11 +31,9 @@ public class ClientThread extends Thread {
 	}
 
 	public synchronized void crit() throws InterruptedException {
-		wait();
 		ClientGame.flytterundt(Integer.parseInt(playerInfo[2]), Integer.parseInt(playerInfo[3]),
 				Integer.parseInt(playerInfo[4]), Integer.parseInt(playerInfo[5]), playerInfo[6]);
 		ClientGame.updateScore(playerInfo[0], playerInfo[1]);
-		notify();
 	}
 
 }
