@@ -43,6 +43,8 @@ public class ClientGame extends Application {
 	static DataOutputStream outToServer;
 	static HashMap<String, String> playerScore = new HashMap<>();
 
+	static boolean nameValid = true;
+
 	public static void main(String args[]) throws Exception {
 
 		name = JOptionPane.showInputDialog("Enter player name:");
@@ -57,7 +59,11 @@ public class ClientGame extends Application {
 			e.printStackTrace();
 		}
 
-		launch(args);
+		if (nameValid) {
+			launch(args);
+		} else {
+			invalidName();
+		}
 	}
 
 	// -------------------------------------------

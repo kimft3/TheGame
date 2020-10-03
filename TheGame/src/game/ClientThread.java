@@ -11,6 +11,8 @@ public class ClientThread extends Thread {
 	String receiveString;
 	String[] playerInfo;
 
+	BufferedReader inFromServer;
+
 	public ClientThread(Socket server) {
 		this.serverSocket = server;
 	}
@@ -19,20 +21,35 @@ public class ClientThread extends Thread {
 	public synchronized void run() {
 		System.out.println("23456");
 
+		try {
+			inFromServer = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+		try {
+			if (inFromServer.readLine().contains("Name is taken")) {
+				System.out.println("false");
+				ClientGame.nameValid = false;
+				ClientGame.invalidName();
+			} else {
+				System.out.println("true");
+			}
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
 		while (true) {
-			BufferedReader inFromServer;
-
+//			BufferedReader inFromServer;
 			try {
-				inFromServer = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
+//				inFromServer = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
 
-				if (inFromServer.readLine().contains("Name is taken")) {
-					ClientGame.invalidName();
-				} else {
-					playerInfo = inFromServer.readLine().split("#");
-					ClientGame.updateBoard(Integer.parseInt(playerInfo[2]), Integer.parseInt(playerInfo[3]),
-							Integer.parseInt(playerInfo[4]), Integer.parseInt(playerInfo[5]), playerInfo[6]);
-					ClientGame.updateScore(playerInfo[0], playerInfo[1]);
-				}
+				playerInfo = inFromServer.readLine().split("#");
+				ClientGame.updateBoard(Integer.parseInt(playerInfo[2]), Integer.parseInt(playerInfo[3]),
+						Integer.parseInt(playerInfo[4]), Integer.parseInt(playerInfo[5]), playerInfo[6]);
+				ClientGame.updateScore(playerInfo[0], playerInfo[1]);
+
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
