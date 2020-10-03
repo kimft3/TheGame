@@ -41,6 +41,7 @@ public class ClientGame extends Application {
 
 	static Socket clientSocket;
 	static DataOutputStream outToServer;
+	static ClientThread ct;
 	static HashMap<String, String> playerScore = new HashMap<>();
 
 	public static void main(String args[]) throws Exception {
@@ -48,7 +49,8 @@ public class ClientGame extends Application {
 		name = JOptionPane.showInputDialog("Enter player name:");
 
 		clientSocket = new Socket("localhost", 12345);// Connections is established, 3 text (send-receive-send)
-		(new ClientThread(clientSocket)).start();
+		ct = new ClientThread(clientSocket);
+		ct.start();
 		outToServer = new DataOutputStream(clientSocket.getOutputStream());
 
 		try {
@@ -56,8 +58,8 @@ public class ClientGame extends Application {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		launch(args);
+
 	}
 
 	// -------------------------------------------
@@ -211,6 +213,15 @@ public class ClientGame extends Application {
 			playerScore.replace(name, score);
 		}
 		updateScoreTable();
+	}
+
+	public static void invalidName() {
+		name = JOptionPane.showInputDialog("That name is taken. Enter a different name:");
+		try {
+			outToServer.writeBytes("j" + "#" + name + "#" + "" + "#" + "" + "#" + '\n');
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

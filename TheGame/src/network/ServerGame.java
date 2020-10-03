@@ -15,7 +15,7 @@ import game.pair;
 
 public class ServerGame {
 	public static List<Player> players = new ArrayList<Player>();
-	public static ArrayList<DataOutputStream> playerStreams = new ArrayList<>(); 
+	public static ArrayList<DataOutputStream> playerStreams = new ArrayList<>();
 
 	@SuppressWarnings("resource")
 	public static void main(String[] args) throws Exception {
@@ -31,18 +31,17 @@ public class ServerGame {
 		for (DataOutputStream s : playerStreams) {
 			try {
 				String playerData = "";
-				if(me.getXposOld()<1) {
+				if (me.getXposOld() < 1) {
 					for (Player p : players) {
-						playerData = p.getName() + "#" + p.getPoint() + "#" + p.getXposOld() + "#" + p.getYposOld() + "#"
-								+ p.getXpos() + "#" + p.getYpos() + "#" + p.getDirection();
-						s.writeBytes(playerData + '\n');}
+						playerData = p.getName() + "#" + p.getPoint() + "#" + p.getXposOld() + "#" + p.getYposOld()
+								+ "#" + p.getXpos() + "#" + p.getYpos() + "#" + p.getDirection();
+						s.writeBytes(playerData + '\n');
+					}
+				} else {
+					s.writeBytes(me.getName() + "#" + me.getPoint() + "#" + me.getXposOld() + "#" + me.getYposOld()
+							+ "#" + me.getXpos() + "#" + me.getYpos() + "#" + me.getDirection() + '\n');
 				}
-				else {
-					s.writeBytes( me.getName() + "#" + me.getPoint() + "#" + me.getXposOld() + "#" + me.getYposOld() + "#"
-							+ me.getXpos() + "#" + me.getYpos() + "#" + me.getDirection()+ '\n');					
-				}					
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -66,7 +65,7 @@ public class ServerGame {
 		case 'j':
 			while (!ServerGame.isNameUnique(playerName)) {
 				try {
-					( outToClient).writeBytes("Name is taken" + '\n');
+					(outToClient).writeBytes("Name is taken" + '\n');
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -74,10 +73,10 @@ public class ServerGame {
 			}
 			ServerGame.playerStreams.add(outToClient);
 			pair p = getRandomFreePosition();
-			Player newPlayer=new Player(playerName, p.getX(), p.getY(), "up");
+			Player newPlayer = new Player(playerName, p.getX(), p.getY(), "up");
 			ServerGame.players.add(newPlayer);
 			ServerGame.sendGameUpdate(newPlayer);
-		break;
+			break;
 		case 'm':
 			for (Player pl : ServerGame.players) {
 				if (pl.getName().equals(playerMessage[1])) {
@@ -85,11 +84,11 @@ public class ServerGame {
 							playerMessage[4]);
 				}
 			}
-		break;
+			break;
 		}
 	}
 
-	public static pair getRandomFreePosition(){
+	public static pair getRandomFreePosition() {
 		int x = 1;
 		int y = 1;
 		boolean found = false;
