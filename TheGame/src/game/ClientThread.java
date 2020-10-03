@@ -13,7 +13,7 @@ public class ClientThread extends Thread {
 
 	BufferedReader inFromServer;
 
-	boolean nameValid = false;
+	boolean nameValid;
 
 	public ClientThread(Socket server) {
 		this.serverSocket = server;
@@ -29,13 +29,15 @@ public class ClientThread extends Thread {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
+
 		if (receiveString.contains("Name is taken")) {
-			nameValid = false;
 			System.out.println("NameValid: " + nameValid);
+			nameValid = false;
 			ClientGame.invalidName();
 		} else {
 			nameValid = true;
 			System.out.println("NameValid: " + nameValid);
+
 			while (nameValid) {
 				try {
 					receiveString = inFromServer.readLine();

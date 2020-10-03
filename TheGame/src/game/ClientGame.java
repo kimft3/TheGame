@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JOptionPane;
 
@@ -45,7 +46,6 @@ public class ClientGame extends Application {
 	static HashMap<String, String> playerScore = new HashMap<>();
 
 	public static void main(String args[]) throws Exception {
-
 		name = JOptionPane.showInputDialog("Enter player name:");
 
 		clientSocket = new Socket("localhost", 12345);// Connections is established, 3 text (send-receive-send)
@@ -58,16 +58,13 @@ public class ClientGame extends Application {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+//		Temporary solution to always launching problem
+		TimeUnit.SECONDS.sleep(3);
+
 		launch(args);
 
 	}
-
-	// -------------------------------------------
-	// | Maze: (0,0) | Score: (1,0) |
-	// |-----------------------------------------|
-	// | boardGrid (0,1) | scorelist |
-	// | | (1,1) |
-	// -------------------------------------------
 
 	@Override
 	public void start(Stage primaryStage) {
