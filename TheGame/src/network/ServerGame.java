@@ -17,40 +17,34 @@ import game.pair;
 public class ServerGame {
 
 	public static List<Player> players = new ArrayList<Player>();
-	public static ArrayList<Socket> playerSockets = new ArrayList<>(); // evt �ndre til
-																		// DataOutputStream-------------------------
+	public static ArrayList<DataOutputStream> playerStreams = new ArrayList<>(); 
 
 	public static String playerName = "";
 
 	@SuppressWarnings("resource")
 	public static void main(String[] args) throws Exception {
-		String receiveString = "", sendString = "";
 		ServerSocket talk = new ServerSocket(12345);
 		while (true) {
 			Socket connectionSocket = talk.accept();
 			(new ServerThread(connectionSocket)).start();
 
-			DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
-
 		}
 	}
 
 	public static void sendGameUpdate(Player me) {
-		for (Socket s : playerSockets) {
+		for (DataOutputStream s : playerStreams) {
 			try {
-				DataOutputStream outToClient = new DataOutputStream(s.getOutputStream());
 				String playerData = "";
 				if(me.getXposOld()<1) {
 				for (Player p : players) {
 					playerData = p.getName() + "#" + p.getPoint() + "#" + p.getXposOld() + "#" + p.getYposOld() + "#"
 							+ p.getXpos() + "#" + p.getYpos() + "#" + p.getDirection();
-					outToClient.writeBytes(playerData + '\n');}}
+					s.writeBytes(playerData + '\n');}}
 				else {
-					outToClient.writeBytes( me.getName() + "#" + me.getPoint() + "#" + me.getXposOld() + "#" + me.getYposOld() + "#"
+					s.writeBytes( me.getName() + "#" + me.getPoint() + "#" + me.getXposOld() + "#" + me.getYposOld() + "#"
 							+ me.getXpos() + "#" + me.getYpos() + "#" + me.getDirection()+ '\n');
 					
-				}
-					
+				}					
 				}
 			 catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -68,7 +62,7 @@ public class ServerGame {
 		return true;
 	}
 
-	public static void play(String receiveString, Socket serverReceiverSocket) {
+	public static synchronized void play(String receiveString, Socket serverReceiverSocket) {
 		System.out.println("ServerThread " + receiveString);
 		String[] playerMessage = receiveString.split("#");
 		playerName = playerMessage[1];
@@ -88,7 +82,12 @@ public class ServerGame {
 
 			}
 			// Setting up standard players
-			ServerGame.playerSockets.add(serverReceiverSocket);
+			try {
+				ServerGame.playerStreams.add(new DataOutputStream(serverReceiverSocket.getOutputStream()));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			pair p = getRandomFreePosition();
 			Player newPlayer=new Player(playerName, p.getX(), p.getY(), "up");
 			ServerGame.players.add(newPlayer);
@@ -140,7 +139,7 @@ public class ServerGame {
 			me.addPoints(-1);
 		} else {
 			// prepared for collision detection
-			// not quite relevant in single plaver version
+			// not quite relevant in single player version
 			Player p = getPlayerAt(x + delta_x, y + delta_y);
 			if (p != null) {
 				me.addPoints(10);
