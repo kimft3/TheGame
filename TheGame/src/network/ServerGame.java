@@ -76,8 +76,9 @@ public class ServerGame {
 		char id = playerMessage[0].charAt(0);
 		switch (id) {
 		case 'j':
-			while (!ServerGame.isNameUnique(playerName)) {
+			if (!ServerGame.isNameUnique(playerName)) {
 				try {
+					System.out.println("Name is taken");
 					DataOutputStream outToClient = new DataOutputStream(serverReceiverSocket.getOutputStream());
 					outToClient.writeBytes("Name is taken" + '\n');
 				} catch (IOException e) {
@@ -85,13 +86,14 @@ public class ServerGame {
 					e.printStackTrace();
 				}
 
+			} else {
+				// Setting up standard players
+				ServerGame.playerSockets.add(serverReceiverSocket);
+				pair p = getRandomFreePosition();
+				Player newPlayer = new Player(playerName, p.getX(), p.getY(), "up");
+				ServerGame.players.add(newPlayer);
+				ServerGame.sendGameUpdate(newPlayer);
 			}
-			// Setting up standard players
-			ServerGame.playerSockets.add(serverReceiverSocket);
-			pair p = getRandomFreePosition();
-			Player newPlayer = new Player(playerName, p.getX(), p.getY(), "up");
-			ServerGame.players.add(newPlayer);
-			ServerGame.sendGameUpdate(newPlayer);
 			break;
 		case 'm':
 			for (Player pl : ServerGame.players) {

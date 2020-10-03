@@ -41,16 +41,16 @@ public class ClientGame extends Application {
 
 	static Socket clientSocket;
 	static DataOutputStream outToServer;
+	static ClientThread ct;
 	static HashMap<String, String> playerScore = new HashMap<>();
-
-	static boolean nameValid = true;
 
 	public static void main(String args[]) throws Exception {
 
 		name = JOptionPane.showInputDialog("Enter player name:");
 
 		clientSocket = new Socket("localhost", 12345);// Connections is established, 3 text (send-receive-send)
-		(new ClientThread(clientSocket)).start();
+		ct = new ClientThread(clientSocket);
+		ct.start();
 		outToServer = new DataOutputStream(clientSocket.getOutputStream());
 
 		try {
@@ -58,12 +58,8 @@ public class ClientGame extends Application {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		launch(args);
 
-		if (nameValid) {
-			launch(args);
-		} else {
-			invalidName();
-		}
 	}
 
 	// -------------------------------------------
