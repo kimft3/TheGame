@@ -13,6 +13,7 @@ import game.Player;
 import game.ServerThread;
 import game.pair;
 
+
 public class ServerGame {
 
 	public static List<Player> players = new ArrayList<Player>();
@@ -34,18 +35,24 @@ public class ServerGame {
 		}
 	}
 
-	public static void sendGameUpdate() {
+	public static void sendGameUpdate(Player me) {
 		for (Socket s : playerSockets) {
 			try {
 				DataOutputStream outToClient = new DataOutputStream(s.getOutputStream());
 				String playerData = "";
+				if(me.getXposOld()<1) {
 				for (Player p : players) {
 					playerData = p.getName() + "#" + p.getPoint() + "#" + p.getXposOld() + "#" + p.getYposOld() + "#"
 							+ p.getXpos() + "#" + p.getYpos() + "#" + p.getDirection();
-					System.out.println("S " + playerData + '\n');
-					outToClient.writeBytes(playerData + '\n');
+					outToClient.writeBytes(playerData + '\n');}}
+				else {
+					outToClient.writeBytes( me.getName() + "#" + me.getPoint() + "#" + me.getXposOld() + "#" + me.getYposOld() + "#"
+							+ me.getXpos() + "#" + me.getYpos() + "#" + me.getDirection()+ '\n');
+					
 				}
-			} catch (IOException e) {
+					
+				}
+			 catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -83,9 +90,9 @@ public class ServerGame {
 			// Setting up standard players
 			ServerGame.playerSockets.add(serverReceiverSocket);
 			pair p = getRandomFreePosition();
-			ServerGame.players.add(new Player(playerName, p.getX(), p.getY(), "up"));
-			System.out.println("opretter ");
-			ServerGame.sendGameUpdate();
+			Player newPlayer=new Player(playerName, p.getX(), p.getY(), "up");
+			ServerGame.players.add(newPlayer);
+			ServerGame.sendGameUpdate(newPlayer);
 			break;
 		case 'm':
 			for (Player pl : ServerGame.players) {
@@ -153,7 +160,7 @@ public class ServerGame {
 			me.setYpos(y + delta_y);
 
 		}
-		ServerGame.sendGameUpdate();
+		ServerGame.sendGameUpdate(me);
 
 	}
 
