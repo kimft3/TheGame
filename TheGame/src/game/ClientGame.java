@@ -33,22 +33,29 @@ public class ClientGame extends Application {
 	public static Image image_wall;
 	public static Image hero_right, hero_left, hero_up, hero_down;
 
+//	public static List<Player> players = new ArrayList<Player>();
+//	public static Player me;
 	static String name;
 
 	private static Label[][] fields;
 	private static TextArea scoreList;
 	static String sendString = "";
+	static String receiveString = "";
 
 	static Socket clientSocket;
 	static DataOutputStream outToServer;
+
 	static HashMap<String, String> playerScore = new HashMap<>();
 
 	public static void main(String args[]) throws Exception {
 
 		name = JOptionPane.showInputDialog("Enter player name:");
 
+		System.out.println(name);
+
 		clientSocket = new Socket("localhost", 12345);// Connections is established, 3 text (send-receive-send)
 		(new ClientThread(clientSocket)).start();
+
 		outToServer = new DataOutputStream(clientSocket.getOutputStream());
 
 		try {
@@ -58,6 +65,14 @@ public class ClientGame extends Application {
 		}
 
 		launch(args);
+		while (true) {
+
+//		System.out.println("C Receiving " + receiveString);
+//		updateGame(receiveString);
+		}
+
+//		clientSocket.close();// 2 text, send-receive
+
 	}
 
 	// -------------------------------------------
@@ -144,7 +159,7 @@ public class ClientGame extends Application {
 		}
 	}
 
-	public static void updateBoard(int oldx, int oldy, int newx, int newy, String direction) {
+	public static void flytterundt(int oldx, int oldy, int newx, int newy, String direction) {
 		if (oldx > 0 && oldy > 0) {
 			Platform.runLater(() -> {
 				fields[oldx][oldy].setGraphic(new ImageView(image_floor));
