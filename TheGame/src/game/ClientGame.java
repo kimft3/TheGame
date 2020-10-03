@@ -213,4 +213,13 @@ public class ClientGame extends Application {
 		updateScoreTable();
 	}
 
+	public static void invalidName() {
+		name = JOptionPane.showInputDialog("That name is taken. Enter a different name:");
+		try {
+			outToServer.writeBytes("j" + "#" + name + "#" + "" + "#" + "" + "#" + '\n');
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 }

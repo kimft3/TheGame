@@ -24,10 +24,15 @@ public class ClientThread extends Thread {
 
 			try {
 				inFromServer = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
-				playerInfo = inFromServer.readLine().split("#");
-				ClientGame.updateBoard(Integer.parseInt(playerInfo[2]), Integer.parseInt(playerInfo[3]),
-						Integer.parseInt(playerInfo[4]), Integer.parseInt(playerInfo[5]), playerInfo[6]);
-				ClientGame.updateScore(playerInfo[0], playerInfo[1]);
+
+				if (inFromServer.readLine().contains("Name is taken")) {
+					ClientGame.invalidName();
+				} else {
+					playerInfo = inFromServer.readLine().split("#");
+					ClientGame.updateBoard(Integer.parseInt(playerInfo[2]), Integer.parseInt(playerInfo[3]),
+							Integer.parseInt(playerInfo[4]), Integer.parseInt(playerInfo[5]), playerInfo[6]);
+					ClientGame.updateScore(playerInfo[0], playerInfo[1]);
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

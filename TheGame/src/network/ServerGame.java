@@ -13,7 +13,6 @@ import game.Player;
 import game.ServerThread;
 import game.pair;
 
-
 public class ServerGame {
 
 	public static List<Player> players = new ArrayList<Player>();
@@ -40,19 +39,20 @@ public class ServerGame {
 			try {
 				DataOutputStream outToClient = new DataOutputStream(s.getOutputStream());
 				String playerData = "";
-				if(me.getXposOld()<1) {
-				for (Player p : players) {
-					playerData = p.getName() + "#" + p.getPoint() + "#" + p.getXposOld() + "#" + p.getYposOld() + "#"
-							+ p.getXpos() + "#" + p.getYpos() + "#" + p.getDirection();
-					outToClient.writeBytes(playerData + '\n');}}
-				else {
-					outToClient.writeBytes( me.getName() + "#" + me.getPoint() + "#" + me.getXposOld() + "#" + me.getYposOld() + "#"
-							+ me.getXpos() + "#" + me.getYpos() + "#" + me.getDirection()+ '\n');
-					
+				if (me.getXposOld() < 1) {
+					for (Player p : players) {
+						playerData = p.getName() + "#" + p.getPoint() + "#" + p.getXposOld() + "#" + p.getYposOld()
+								+ "#" + p.getXpos() + "#" + p.getYpos() + "#" + p.getDirection();
+						outToClient.writeBytes(playerData + '\n');
+					}
+				} else {
+					outToClient.writeBytes(
+							me.getName() + "#" + me.getPoint() + "#" + me.getXposOld() + "#" + me.getYposOld() + "#"
+									+ me.getXpos() + "#" + me.getYpos() + "#" + me.getDirection() + '\n');
+
 				}
-					
-				}
-			 catch (IOException e) {
+
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -76,7 +76,6 @@ public class ServerGame {
 		char id = playerMessage[0].charAt(0);
 		switch (id) {
 		case 'j':
-
 			while (!ServerGame.isNameUnique(playerName)) {
 				try {
 					DataOutputStream outToClient = new DataOutputStream(serverReceiverSocket.getOutputStream());
@@ -90,7 +89,7 @@ public class ServerGame {
 			// Setting up standard players
 			ServerGame.playerSockets.add(serverReceiverSocket);
 			pair p = getRandomFreePosition();
-			Player newPlayer=new Player(playerName, p.getX(), p.getY(), "up");
+			Player newPlayer = new Player(playerName, p.getX(), p.getY(), "up");
 			ServerGame.players.add(newPlayer);
 			ServerGame.sendGameUpdate(newPlayer);
 			break;
