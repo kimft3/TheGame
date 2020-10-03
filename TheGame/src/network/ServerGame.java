@@ -13,13 +13,9 @@ import game.Player;
 import game.ServerThread;
 import game.pair;
 
-
 public class ServerGame {
-
 	public static List<Player> players = new ArrayList<Player>();
 	public static ArrayList<DataOutputStream> playerStreams = new ArrayList<>(); 
-
-	public static String playerName = "";
 
 	@SuppressWarnings("resource")
 	public static void main(String[] args) throws Exception {
@@ -36,21 +32,20 @@ public class ServerGame {
 			try {
 				String playerData = "";
 				if(me.getXposOld()<1) {
-				for (Player p : players) {
-					playerData = p.getName() + "#" + p.getPoint() + "#" + p.getXposOld() + "#" + p.getYposOld() + "#"
-							+ p.getXpos() + "#" + p.getYpos() + "#" + p.getDirection();
-					s.writeBytes(playerData + '\n');}}
+					for (Player p : players) {
+						playerData = p.getName() + "#" + p.getPoint() + "#" + p.getXposOld() + "#" + p.getYposOld() + "#"
+								+ p.getXpos() + "#" + p.getYpos() + "#" + p.getDirection();
+						s.writeBytes(playerData + '\n');}
+				}
 				else {
 					s.writeBytes( me.getName() + "#" + me.getPoint() + "#" + me.getXposOld() + "#" + me.getYposOld() + "#"
-							+ me.getXpos() + "#" + me.getYpos() + "#" + me.getDirection()+ '\n');
-					
+							+ me.getXpos() + "#" + me.getYpos() + "#" + me.getDirection()+ '\n');					
 				}					
-				}
-			 catch (IOException e) {
+			}
+			catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
 		}
 	}
 
@@ -62,37 +57,27 @@ public class ServerGame {
 		return true;
 	}
 
-	public static synchronized void play(String receiveString, Socket serverReceiverSocket) {
-		System.out.println("ServerThread " + receiveString);
+	public static synchronized void play(String receiveString, DataOutputStream outToClient) {
 		String[] playerMessage = receiveString.split("#");
+		String playerName;
 		playerName = playerMessage[1];
-
 		char id = playerMessage[0].charAt(0);
 		switch (id) {
 		case 'j':
-
 			while (!ServerGame.isNameUnique(playerName)) {
 				try {
-					DataOutputStream outToClient = new DataOutputStream(serverReceiverSocket.getOutputStream());
-					outToClient.writeBytes("Name is taken" + '\n');
+					( outToClient).writeBytes("Name is taken" + '\n');
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
 			}
-			// Setting up standard players
-			try {
-				ServerGame.playerStreams.add(new DataOutputStream(serverReceiverSocket.getOutputStream()));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			ServerGame.playerStreams.add(outToClient);
 			pair p = getRandomFreePosition();
 			Player newPlayer=new Player(playerName, p.getX(), p.getY(), "up");
 			ServerGame.players.add(newPlayer);
 			ServerGame.sendGameUpdate(newPlayer);
-			break;
+		break;
 		case 'm':
 			for (Player pl : ServerGame.players) {
 				if (pl.getName().equals(playerMessage[1])) {
@@ -100,16 +85,11 @@ public class ServerGame {
 							playerMessage[4]);
 				}
 			}
-
-			break;
+		break;
 		}
-
 	}
 
-	public static pair getRandomFreePosition()
-	// finds a random new position which is not wall
-	// and not occupied by other players
-	{
+	public static pair getRandomFreePosition(){
 		int x = 1;
 		int y = 1;
 		boolean found = false;
@@ -123,7 +103,6 @@ public class ServerGame {
 					if (p.getXpos() == x && p.getYpos() == y)
 						found = false;
 				}
-
 			}
 		}
 		pair p = new pair(x, y);
@@ -131,30 +110,22 @@ public class ServerGame {
 	}
 
 	public static void updatePlayer(Player me, int delta_x, int delta_y, String direction) {
-
 		me.setDirection(direction);
 		int x = me.getXpos(), y = me.getYpos();
-
 		if (Generel.board[y + delta_y].charAt(x + delta_x) == 'w') {
 			me.addPoints(-1);
 		} else {
-			// prepared for collision detection
-			// not quite relevant in single player version
 			Player p = getPlayerAt(x + delta_x, y + delta_y);
 			if (p != null) {
 				me.addPoints(10);
-				// update the other player
 				p.addPoints(-10);
 				pair pa = getRandomFreePosition();
 				p.setXpos(pa.getX());
 				p.setYpos(pa.getY());
 				p.setXposOld(-1);
 				p.setYposOld(-1);
-
-				// movePlayerOnScreen(x+delta_x,y+delta_y,pa.getX(),pa.getY(),p.direction);
 			} else
 				me.addPoints(1);
-//			movePlayerOnScreen(x,y,x+delta_x,y+delta_y,direction);
 			me.setXpos(x + delta_x);
 			me.setYpos(y + delta_y);
 
