@@ -63,19 +63,20 @@ public class ServerGame {
 		char id = playerMessage[0].charAt(0);
 		switch (id) {
 		case 'j':
-			while (!ServerGame.isNameUnique(playerName)) {
+			if (!ServerGame.isNameUnique(playerName)) {
 				try {
 					(outToClient).writeBytes("Name is taken" + '\n');
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			} else {
+				ServerGame.playerStreams.add(outToClient);
+				pair p = getRandomFreePosition();
+				Player newPlayer = new Player(playerName, p.getX(), p.getY(), "up");
+				ServerGame.players.add(newPlayer);
+				ServerGame.sendGameUpdate(newPlayer);
 			}
-			ServerGame.playerStreams.add(outToClient);
-			pair p = getRandomFreePosition();
-			Player newPlayer = new Player(playerName, p.getX(), p.getY(), "up");
-			ServerGame.players.add(newPlayer);
-			ServerGame.sendGameUpdate(newPlayer);
 			break;
 		case 'm':
 			for (Player pl : ServerGame.players) {
