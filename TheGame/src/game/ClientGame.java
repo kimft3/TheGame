@@ -159,9 +159,7 @@ public class ClientGame extends Application {
 		}
 	}
 
-	public static synchronized void flytterundt(int oldx, int oldy, int newx, int newy, String direction) {
-//		for (int i = 0; i < 1000000; i++) {
-//		}
+	public static void flytterundt(int oldx, int oldy, int newx, int newy, String direction) {
 		if (oldx > 0 && oldy > 0) {
 			Platform.runLater(() -> {
 				fields[oldx][oldy].setGraphic(new ImageView(image_floor));
@@ -188,7 +186,7 @@ public class ClientGame extends Application {
 
 	}
 
-	public static synchronized void updateScoreTable() {
+	public static void updateScoreTable() {
 		Platform.runLater(() -> {
 			scoreList.setText(getScoreList());
 		});
@@ -204,7 +202,7 @@ public class ClientGame extends Application {
 		}
 	}
 
-	public static synchronized String getScoreList() {
+	public static String getScoreList() {
 		StringBuffer b = new StringBuffer(100);
 		for (Entry<String, String> entry : playerScore.entrySet()) {
 			b.append(entry + "\r\n");
