@@ -1,5 +1,7 @@
 package game;
 
+import java.io.DataOutputStream;
+
 public class Player {
 	String name;
 	int xpos;
@@ -10,12 +12,23 @@ public class Player {
 	int xposOld = -1;
 	int yposOld = -1;
 
-	public Player(String name, int xpos, int ypos, String direction) {
+	DataOutputStream outStream;
+
+	public Player(String name, int xpos, int ypos, String direction, DataOutputStream outStream) {
 		this.name = name;
 		this.xpos = xpos;
 		this.ypos = ypos;
 		this.direction = direction;
 		this.point = 0;
+		this.outStream = outStream;
+	}
+
+	public DataOutputStream getOutStream() {
+		return outStream;
+	}
+
+	public void setOutStream(DataOutputStream outStream) {
+		this.outStream = outStream;
 	}
 
 	public int getXposOld() {

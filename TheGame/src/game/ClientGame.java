@@ -1,11 +1,12 @@
 package game;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.JOptionPane;
 
@@ -46,9 +47,30 @@ public class ClientGame extends Application {
 	static HashMap<String, String> playerScore = new HashMap<>();
 
 	public static void main(String args[]) throws Exception {
+		boolean nameNotValid = true;
+		String message = "Enter player name";
 
-		name = JOptionPane.showInputDialog("Enter player name:");
-		clientSocket = new Socket("localhost", 12345);
+		while (nameNotValid) {
+			name = JOptionPane.showInputDialog(message);
+
+			clientSocket = new Socket("localhost", 12345);// Connections is established, 3 text (send-receive-send)
+			outToServer = new DataOutputStream(clientSocket.getOutputStream());
+			BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+			try {
+				outToServer.writeBytes("j" + "#" + name + "#" + "" + "#" + "" + "#" + '\n');
+				System.out.println("j" + "#" + name + "#" + "" + "#" + "" + "#" + '\n');
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.out.println("kurt");
+			}
+
+			String reply = inFromServer.readLine();
+			nameNotValid = reply.contains("Name is taken");
+			if (nameNotValid) {
+				message = "enter a different name";
+			}
+		}
 
 		ct = new ClientThread(clientSocket);
 		ct.start();
@@ -60,18 +82,7 @@ public class ClientGame extends Application {
 			e1.printStackTrace();
 		}
 
-		try {
-			outToServer.writeBytes("j" + "#" + name + "#" + "" + "#" + "" + "#" + '\n');
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-//		Temporary solution to always launching problem
-//		Will probably need synchronization between ClientGame and ClientThread, 
-//		nameValidation is critical section launch should await
-		TimeUnit.SECONDS.sleep(3);
-
 		launch(args);
-
 	}
 
 	@Override
