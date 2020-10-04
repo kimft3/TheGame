@@ -21,7 +21,7 @@ public class ClientThread extends Thread {
 
 	@Override
 	public void run() {
-		System.out.println("23456");
+		ClientGame.start = true;
 
 		try {
 			inFromServer = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
@@ -29,24 +29,30 @@ public class ClientThread extends Thread {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
+
 		if (receiveString.contains("Name is taken")) {
 			nameValid = false;
 			System.out.println("NameValid: " + nameValid);
 			ClientGame.invalidName();
 		} else {
 			nameValid = true;
+			ClientGame.start = true;
 			System.out.println("NameValid: " + nameValid);
-			while (nameValid) {
-				try {
-					receiveString = inFromServer.readLine();
-					playerInfo = receiveString.split("#");
-					ClientGame.updateBoard(Integer.parseInt(playerInfo[2]), Integer.parseInt(playerInfo[3]),
-							Integer.parseInt(playerInfo[4]), Integer.parseInt(playerInfo[5]), playerInfo[6]);
-					ClientGame.updateScore(playerInfo[0], playerInfo[1]);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			try {
+				ClientGame.main(ClientGame.arg);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
+			try {
+				receiveString = inFromServer.readLine();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			playerInfo = receiveString.split("#");
+			ClientGame.updateBoard(Integer.parseInt(playerInfo[2]), Integer.parseInt(playerInfo[3]),
+					Integer.parseInt(playerInfo[4]), Integer.parseInt(playerInfo[5]), playerInfo[6]);
+			ClientGame.updateScore(playerInfo[0], playerInfo[1]);
+
 		}
 
 //		if (getNameValidation()) {

@@ -44,7 +44,13 @@ public class ClientGame extends Application {
 	static ClientThread ct;
 	static HashMap<String, String> playerScore = new HashMap<>();
 
+	static String[] arg;
+
+	static boolean start = false;
+
 	public static void main(String args[]) throws Exception {
+//		if (!start) {
+		arg = args;
 
 		name = JOptionPane.showInputDialog("Enter player name:");
 
@@ -58,8 +64,11 @@ public class ClientGame extends Application {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		launch(args);
-
+		while (start) {
+//		} else {
+			launch(args);
+		}
+//		}
 	}
 
 	// -------------------------------------------
