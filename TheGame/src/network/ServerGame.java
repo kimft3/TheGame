@@ -137,7 +137,6 @@ public class ServerGame {
 
 		}
 		sendGameUpdate(me);
-
 	}
 
 	public static Player getPlayerAt(int x, int y) {

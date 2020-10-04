@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JOptionPane;
 
@@ -141,16 +142,36 @@ public class ClientGame extends Application {
 			scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
 				switch (event.getCode()) {
 				case UP:
-					playerMoved(0, -1, "up");
+					try {
+						playerMoved(0, -1, "up");
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					break;
 				case DOWN:
-					playerMoved(0, +1, "down");
+					try {
+						playerMoved(0, +1, "down");
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					break;
 				case LEFT:
-					playerMoved(-1, 0, "left");
+					try {
+						playerMoved(-1, 0, "left");
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					break;
 				case RIGHT:
-					playerMoved(+1, 0, "right");
+					try {
+						playerMoved(+1, 0, "right");
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					break;
 				default:
 					break;
@@ -195,7 +216,7 @@ public class ClientGame extends Application {
 		});
 	}
 
-	public void playerMoved(int delta_x, int delta_y, String direction) {
+	public void playerMoved(int delta_x, int delta_y, String direction) throws InterruptedException {
 		sendString = "m" + "#" + name + "#" + delta_x + "#" + delta_y + "#" + direction + '\n';
 		System.out.println(sendString);
 		try {
@@ -203,6 +224,7 @@ public class ClientGame extends Application {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		TimeUnit.MILLISECONDS.sleep(100);
 	}
 
 	public static String getScoreList() {
