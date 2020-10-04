@@ -217,6 +217,7 @@ public class ClientGame extends Application {
 	}
 
 	public void playerMoved(int delta_x, int delta_y, String direction) throws InterruptedException {
+		TimeUnit.MILLISECONDS.sleep(100);
 		sendString = "m" + "#" + name + "#" + delta_x + "#" + delta_y + "#" + direction + '\n';
 		System.out.println(sendString);
 		try {
@@ -224,7 +225,6 @@ public class ClientGame extends Application {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		TimeUnit.MILLISECONDS.sleep(100);
 	}
 
 	public static String getScoreList() {
