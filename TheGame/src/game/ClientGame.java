@@ -79,7 +79,6 @@ public class ClientGame extends Application {
 		try {
 			outToServer = new DataOutputStream(clientSocket.getOutputStream());
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -145,7 +144,6 @@ public class ClientGame extends Application {
 					try {
 						playerMoved(0, -1, "up");
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					break;
@@ -153,7 +151,6 @@ public class ClientGame extends Application {
 					try {
 						playerMoved(0, +1, "down");
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					break;
@@ -161,7 +158,6 @@ public class ClientGame extends Application {
 					try {
 						playerMoved(-1, 0, "left");
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					break;
@@ -169,7 +165,6 @@ public class ClientGame extends Application {
 					try {
 						playerMoved(+1, 0, "right");
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					break;
@@ -216,6 +211,7 @@ public class ClientGame extends Application {
 		});
 	}
 
+//	TODO m tagget bliver kappet af sendt streng heromkring
 	public void playerMoved(int delta_x, int delta_y, String direction) throws InterruptedException {
 		TimeUnit.MILLISECONDS.sleep(100);
 		sendString = "m" + "#" + name + "#" + delta_x + "#" + delta_y + "#" + direction + '\n';
@@ -235,15 +231,6 @@ public class ClientGame extends Application {
 		return b.toString();
 	}
 
-//	public Player getPlayerAt(int x, int y) {
-//		for (Player p : players) {
-//			if (p.getXpos() == x && p.getYpos() == y) {
-//				return p;
-//			}
-//		}
-//		return null;
-//	}
-
 	public static void updateScore(String name, String score) {
 		if (!playerScore.containsKey(name)) {
 			playerScore.put(name, score);
@@ -251,15 +238,6 @@ public class ClientGame extends Application {
 			playerScore.replace(name, score);
 		}
 		updateScoreTable();
-	}
-
-	public static void invalidName() {
-		name = JOptionPane.showInputDialog("That name is taken. Enter a different name:");
-		try {
-			outToServer.writeBytes("j" + "#" + name + "#" + "" + "#" + "" + "#" + '\n');
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 }

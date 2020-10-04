@@ -13,8 +13,6 @@ public class ClientThread extends Thread {
 
 	BufferedReader inFromServer;
 
-	boolean nameValid = false;
-
 	public ClientThread(Socket server) {
 		this.serverSocket = server;
 	}

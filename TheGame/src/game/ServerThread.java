@@ -26,9 +26,7 @@ public class ServerThread extends Thread {
 				System.out.println("st " + receiveString);
 				DataOutputStream out = new DataOutputStream(serverReceiverSocket.getOutputStream());
 				ServerGame.play(receiveString, out);
-
 			} catch (IOException | InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

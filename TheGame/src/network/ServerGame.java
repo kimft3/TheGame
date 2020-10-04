@@ -24,9 +24,11 @@ public class ServerGame {
 			Socket connectionSocket = talk.accept();
 			ServerThread st = (new ServerThread(connectionSocket));
 			st.start();
-//			st.join();
 		}
 	}
+
+//	TODO Bomber
+//	TODO spiller synlig hos alle clienter efter at blive trådt på og ved start
 
 	public static void sendGameUpdate(Player me) throws InterruptedException {
 		TimeUnit.MILLISECONDS.sleep(100);
@@ -74,11 +76,10 @@ public class ServerGame {
 					e.printStackTrace();
 				}
 			} else {
-//				ServerGame.playerStreams.add(outToClient);
 				pair p = getRandomFreePosition();
 				Player newPlayer = new Player(playerName, p.getX(), p.getY(), "up", outToClient);
-				ServerGame.players.add(newPlayer);
-				ServerGame.sendGameUpdate(newPlayer);
+				players.add(newPlayer);
+				sendGameUpdate(newPlayer);
 			}
 			break;
 		case 'm':
@@ -102,7 +103,7 @@ public class ServerGame {
 			y = Math.abs(r.nextInt() % 18) + 1;
 			if (Generel.board[y].charAt(x) == ' ') {
 				found = true;
-				for (Player p : ServerGame.players) {
+				for (Player p : players) {
 					if (p.getXpos() == x && p.getYpos() == y)
 						found = false;
 				}
