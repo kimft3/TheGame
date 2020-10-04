@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import game.Generel;
 import game.Player;
@@ -15,36 +16,38 @@ import game.pair;
 
 public class ServerGame {
 	public static List<Player> players = new ArrayList<Player>();
-	public static ArrayList<DataOutputStream> playerStreams = new ArrayList<>();
 
 	@SuppressWarnings("resource")
 	public static void main(String[] args) throws Exception {
 		ServerSocket talk = new ServerSocket(12345);
 		while (true) {
 			Socket connectionSocket = talk.accept();
-			(new ServerThread(connectionSocket)).start();
-
+			ServerThread st = (new ServerThread(connectionSocket));
+			st.start();
+//			st.join();
 		}
 	}
 
-	public static void sendGameUpdate(Player me) {
-		for (DataOutputStream s : playerStreams) {
-			try {
-				String playerData = "";
-				if (me.getXposOld() < 1) {
-					for (Player p : players) {
-						playerData = p.getName() + "#" + p.getPoint() + "#" + p.getXposOld() + "#" + p.getYposOld()
-								+ "#" + p.getXpos() + "#" + p.getYpos() + "#" + p.getDirection();
-						s.writeBytes(playerData + '\n');
-					}
-				} else {
-					s.writeBytes(me.getName() + "#" + me.getPoint() + "#" + me.getXposOld() + "#" + me.getYposOld()
-							+ "#" + me.getXpos() + "#" + me.getYpos() + "#" + me.getDirection() + '\n');
+	public static void sendGameUpdate(Player me) throws InterruptedException {
+		TimeUnit.MILLISECONDS.sleep(100);
+		try {
+			String playerData = "";
+			if (me.getXposOld() < 1) {
+				for (Player p : players) {
+					playerData = p.getName() + "#" + p.getPoint() + "#" + 0 + "#" + 0 + "#" + p.getXpos() + "#"
+							+ p.getYpos() + "#" + p.getDirection();
+					me.getOutStream().writeBytes(playerData + '\n');
+					TimeUnit.MILLISECONDS.sleep(100);
 				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} else {
+				for (Player p : players) {
+					p.getOutStream().writeBytes(
+							me.getName() + "#" + me.getPoint() + "#" + me.getXposOld() + "#" + me.getYposOld() + "#"
+									+ me.getXpos() + "#" + me.getYpos() + "#" + me.getDirection() + '\n');
+				}
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -56,7 +59,8 @@ public class ServerGame {
 		return true;
 	}
 
-	public static synchronized void play(String receiveString, DataOutputStream outToClient) {
+	public static synchronized void play(String receiveString, DataOutputStream outToClient)
+			throws InterruptedException {
 		String[] playerMessage = receiveString.split("#");
 		String playerName;
 		playerName = playerMessage[1];
@@ -67,13 +71,12 @@ public class ServerGame {
 				try {
 					(outToClient).writeBytes("Name is taken" + '\n');
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			} else {
-				ServerGame.playerStreams.add(outToClient);
+//				ServerGame.playerStreams.add(outToClient);
 				pair p = getRandomFreePosition();
-				Player newPlayer = new Player(playerName, p.getX(), p.getY(), "up");
+				Player newPlayer = new Player(playerName, p.getX(), p.getY(), "up", outToClient);
 				ServerGame.players.add(newPlayer);
 				ServerGame.sendGameUpdate(newPlayer);
 			}
@@ -109,7 +112,8 @@ public class ServerGame {
 		return p;
 	}
 
-	public static void updatePlayer(Player me, int delta_x, int delta_y, String direction) {
+	public synchronized static void updatePlayer(Player me, int delta_x, int delta_y, String direction)
+			throws InterruptedException {
 		me.setDirection(direction);
 		int x = me.getXpos(), y = me.getYpos();
 		if (Generel.board[y + delta_y].charAt(x + delta_x) == 'w') {
@@ -124,13 +128,15 @@ public class ServerGame {
 				p.setYpos(pa.getY());
 				p.setXposOld(-1);
 				p.setYposOld(-1);
-			} else
+				sendGameUpdate(p);
+			} else {
 				me.addPoints(1);
+			}
 			me.setXpos(x + delta_x);
 			me.setYpos(y + delta_y);
 
 		}
-		ServerGame.sendGameUpdate(me);
+		sendGameUpdate(me);
 
 	}
 

@@ -21,39 +21,36 @@ public class ClientThread extends Thread {
 
 	@Override
 	public void run() {
-		ClientGame.start = true;
-
-		try {
-			inFromServer = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
-			receiveString = inFromServer.readLine();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-
-		if (receiveString.contains("Name is taken")) {
-			nameValid = false;
-			System.out.println("NameValid: " + nameValid);
-			ClientGame.invalidName();
-		} else {
-			nameValid = true;
-			ClientGame.start = true;
-			System.out.println("NameValid: " + nameValid);
+		while (true) {
 			try {
-				ClientGame.main(ClientGame.arg);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			try {
+				inFromServer = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
 				receiveString = inFromServer.readLine();
-			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println("ct " + receiveString);
+				playerInfo = receiveString.split("#");
+				ClientGame.updateBoard(Integer.parseInt(playerInfo[2]), Integer.parseInt(playerInfo[3]),
+						Integer.parseInt(playerInfo[4]), Integer.parseInt(playerInfo[5]), playerInfo[6]);
+				ClientGame.updateScore(playerInfo[0], playerInfo[1]);
+			} catch (IOException e1) {
+				e1.printStackTrace();
 			}
-			playerInfo = receiveString.split("#");
-			ClientGame.updateBoard(Integer.parseInt(playerInfo[2]), Integer.parseInt(playerInfo[3]),
-					Integer.parseInt(playerInfo[4]), Integer.parseInt(playerInfo[5]), playerInfo[6]);
-			ClientGame.updateScore(playerInfo[0], playerInfo[1]);
-
 		}
+//		if (receiveString.contains("Name is taken")) {
+//			nameValid = false;
+//			System.out.println("NameValid: " + nameValid);
+//			ClientGame.invalidName();
+//		} else {
+//			nameValid = true;
+//			System.out.println("NameValid: " + nameValid);
+//			try {
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//			try {
+//				receiveString = inFromServer.readLine();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+	}
 
 //		if (getNameValidation()) {
 //			playerInfo = receiveString.split("#");
@@ -61,7 +58,7 @@ public class ClientThread extends Thread {
 //					Integer.parseInt(playerInfo[4]), Integer.parseInt(playerInfo[5]), playerInfo[6]);
 //			ClientGame.updateScore(playerInfo[0], playerInfo[1]);
 //		}
-	}
+}
 //
 //	public boolean getNameValidation() {
 //		boolean validated = false;
@@ -75,5 +72,3 @@ public class ClientThread extends Thread {
 //		}
 //		return validated;
 //	}
-
-}

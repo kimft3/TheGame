@@ -18,19 +18,20 @@ public class ServerThread extends Thread {
 
 	@Override
 	public void run() {
-		try {
-			while (true) {
+		while (true) {
+			try {
+
 				BufferedReader inFromClient = new BufferedReader(
 						new InputStreamReader(serverReceiverSocket.getInputStream()));
-				receiveString = inFromClient.readLine(); 
-				DataOutputStream out = new DataOutputStream(serverReceiverSocket.getOutputStream());		
+				receiveString = inFromClient.readLine();
+				System.out.println("st " + receiveString);
+				DataOutputStream out = new DataOutputStream(serverReceiverSocket.getOutputStream());
 				ServerGame.play(receiveString, out);
+
+			} catch (IOException | InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-
 	}
-
 }
