@@ -13,7 +13,7 @@ public class ClientThread extends Thread {
 
 	BufferedReader inFromServer;
 
-	boolean nameValid;
+	boolean nameValid = false;
 
 	public ClientThread(Socket server) {
 		this.serverSocket = server;
@@ -32,7 +32,6 @@ public class ClientThread extends Thread {
 
 		if (receiveString.contains("Name is taken")) {
 			System.out.println("NameValid: " + nameValid);
-			nameValid = false;
 			ClientGame.invalidName();
 		} else {
 			nameValid = true;
@@ -50,15 +49,8 @@ public class ClientThread extends Thread {
 				}
 			}
 		}
-
-//		if (getNameValidation()) {
-//			playerInfo = receiveString.split("#");
-//			ClientGame.updateBoard(Integer.parseInt(playerInfo[2]), Integer.parseInt(playerInfo[3]),
-//					Integer.parseInt(playerInfo[4]), Integer.parseInt(playerInfo[5]), playerInfo[6]);
-//			ClientGame.updateScore(playerInfo[0], playerInfo[1]);
-//		}
 	}
-//
+
 //	public boolean getNameValidation() {
 //		boolean validated = false;
 //		if (receiveString.contains("Name is taken")) {
@@ -70,6 +62,4 @@ public class ClientThread extends Thread {
 //			validated = true;
 //		}
 //		return validated;
-//	}
-
 }

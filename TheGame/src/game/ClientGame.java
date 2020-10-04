@@ -46,20 +46,28 @@ public class ClientGame extends Application {
 	static HashMap<String, String> playerScore = new HashMap<>();
 
 	public static void main(String args[]) throws Exception {
-		name = JOptionPane.showInputDialog("Enter player name:");
 
-		clientSocket = new Socket("localhost", 12345);// Connections is established, 3 text (send-receive-send)
+		name = JOptionPane.showInputDialog("Enter player name:");
+		clientSocket = new Socket("localhost", 12345);
+
 		ct = new ClientThread(clientSocket);
 		ct.start();
-		outToServer = new DataOutputStream(clientSocket.getOutputStream());
+
+		try {
+			outToServer = new DataOutputStream(clientSocket.getOutputStream());
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		try {
 			outToServer.writeBytes("j" + "#" + name + "#" + "" + "#" + "" + "#" + '\n');
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 //		Temporary solution to always launching problem
+//		Will probably need synchronization between ClientGame and ClientThread, 
+//		nameValidation is critical section launch should await
 		TimeUnit.SECONDS.sleep(3);
 
 		launch(args);
