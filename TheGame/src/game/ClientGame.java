@@ -50,38 +50,29 @@ public class ClientGame extends Application {
 	public static void main(String args[]) throws Exception {
 		boolean nameNotValid = true;
 		String message = "Enter player name";
-
+		String reply="";
 		while (nameNotValid) {
 			name = JOptionPane.showInputDialog(message);
-
 			clientSocket = new Socket("localhost", 12345);// Connections is established, 3 text (send-receive-send)
 			outToServer = new DataOutputStream(clientSocket.getOutputStream());
 			BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
+		
 			try {
 				outToServer.writeBytes("j" + "#" + name + "#" + "" + "#" + "" + "#" + '\n');
-				System.out.println("j" + "#" + name + "#" + "" + "#" + "" + "#" + '\n');
 			} catch (IOException e) {
 				e.printStackTrace();
 				System.out.println("kurt");
 			}
 
-			String reply = inFromServer.readLine();
+			reply= inFromServer.readLine();
 			nameNotValid = reply.contains("Name is taken");
 			if (nameNotValid) {
 				message = "enter a different name";
-			}
+			}			
 		}
 
 		ct = new ClientThread(clientSocket);
 		ct.start();
-
-		try {
-			outToServer = new DataOutputStream(clientSocket.getOutputStream());
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-
 		launch(args);
 	}
 

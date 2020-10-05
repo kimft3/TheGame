@@ -28,25 +28,24 @@ public class ServerGame {
 	}
 
 //	TODO Bomber
-//	TODO spiller synlig hos alle clienter efter at blive trådt på og ved start
 
 	public static void sendGameUpdate(Player me) throws InterruptedException {
 		TimeUnit.MILLISECONDS.sleep(100);
 		try {
 			String playerData = "";
-			if (me.getXposOld() < 1) {
+			if (me.getXposOld() < 1) {				
 				for (Player p : players) {
 					playerData = p.getName() + "#" + p.getPoint() + "#" + 0 + "#" + 0 + "#" + p.getXpos() + "#"
 							+ p.getYpos() + "#" + p.getDirection();
 					me.getOutStream().writeBytes(playerData + '\n');
 					TimeUnit.MILLISECONDS.sleep(100);
 				}
-			} else {
+			} 
 				for (Player p : players) {
 					p.getOutStream().writeBytes(
 							me.getName() + "#" + me.getPoint() + "#" + me.getXposOld() + "#" + me.getYposOld() + "#"
 									+ me.getXpos() + "#" + me.getYpos() + "#" + me.getDirection() + '\n');
-				}
+				
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -76,6 +75,11 @@ public class ServerGame {
 					e.printStackTrace();
 				}
 			} else {
+				try {
+					(outToClient).writeBytes("Good to go" + '\n');
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				pair p = getRandomFreePosition();
 				Player newPlayer = new Player(playerName, p.getX(), p.getY(), "up", outToClient);
 				players.add(newPlayer);
