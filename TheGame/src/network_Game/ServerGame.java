@@ -7,7 +7,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import objects.Bomb;
 import objects.Generel;
@@ -18,8 +17,7 @@ import threads.ServerThread;
 
 public class ServerGame {
 	public static List<Player> players = new ArrayList<>();
-	public static List<Bomb> bombs=new ArrayList<>();
-
+	public static List<Bomb> bombs = new ArrayList<>();
 
 	@SuppressWarnings("resource")
 	public static void main(String[] args) throws Exception {
@@ -28,63 +26,54 @@ public class ServerGame {
 			Socket connectionSocket = talk.accept();
 			ServerThread st = (new ServerThread(connectionSocket));
 			st.start();
-			BombThread bt=new BombThread();
+			BombThread bt = new BombThread();
 			bt.start();
 		}
 	}
-
-//	TODO Bomber
 
 	public static void sendGameUpdate(Player me) throws InterruptedException {
 		try {
 			String playerData = "";
 			if (me.getXposOld() < 1) { // new player
-				for (Player p : players) {			
+				for (Player p : players) {
 					playerData = p.getName() + "#" + p.getPoint() + "#" + 0 + "#" + 0 + "#" + p.getXpos() + "#"
 							+ p.getYpos() + "#" + p.getDirection();
-					me.getOutStream().writeBytes(playerData + '\n');					
+					me.getOutStream().writeBytes(playerData + '\n');
 				}
-			}			
+			}
 			for (Player p : players) {
 				String s = me.getName() + "#" + me.getPoint() + "#" + me.getXposOld() + "#" + me.getYposOld() + "#"
 						+ me.getXpos() + "#" + me.getYpos() + "#" + me.getDirection() + '\n';
-				p.getOutStream().writeBytes(s);			
+				p.getOutStream().writeBytes(s);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
 
-	public static void sendGameUpdate(Bomb bomb,String action) throws IOException {
-		if(action.equals("load")) {
+	public static void sendGameUpdate(Bomb bomb, String action) throws IOException {
+		if (action.equals("load")) {
 			for (Player p : players) {
-				String s = "b" + "#"+  bomb.getXpos() + "#" + bomb.getYpos()  + '\n';
+				String s = "b" + "#" + bomb.getXpos() + "#" + bomb.getYpos() + '\n';
 				p.getOutStream().writeBytes(s);
 			}
-		}
-		else {
+		} else {
 			for (Player p : players) {
-				String s = "e" + "#"+  bomb.getXpos() + "#" + bomb.getYpos()  + '\n';
+				String s = "e" + "#" + bomb.getXpos() + "#" + bomb.getYpos() + '\n';
 				p.getOutStream().writeBytes(s);
 			}
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			for (Player p : players) {
-				String s = "w" + "#"+  bomb.getXpos() + "#" + bomb.getYpos()  + '\n';
+				String s = "w" + "#" + bomb.getXpos() + "#" + bomb.getYpos() + '\n';
 				p.getOutStream().writeBytes(s);
 			}
-			
-			
+
 		}
 	}
-	
-	
-	
 
 	public static boolean isNameUnique(String name) {
 		for (Player p : players) {

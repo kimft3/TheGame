@@ -24,7 +24,6 @@ public class ClientThread extends Thread {
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
 		try {
@@ -36,26 +35,26 @@ public class ClientThread extends Thread {
 			try {
 				receiveString = inFromServer.readLine();
 				playerInfo = receiveString.split("#");
-				char action =playerInfo[0].charAt(0);
-				switch(action) {
+				char action = playerInfo[0].charAt(0);
+				switch (action) {
 				case 'b':
-					ClientGame.updateBoard(0, 0,
-							Integer.parseInt(playerInfo[1]), Integer.parseInt(playerInfo[2]), "bomb");
-				break;
-				case 'e':
-					ClientGame.updateBoard(0, 0,
-							Integer.parseInt(playerInfo[1]), Integer.parseInt(playerInfo[2]), "explode");
-				break;
-				case 'w':
-					ClientGame.updateBoard(0, 0,
-							Integer.parseInt(playerInfo[1]), Integer.parseInt(playerInfo[2]), "floor");
+					ClientGame.updateBoard(0, 0, Integer.parseInt(playerInfo[1]), Integer.parseInt(playerInfo[2]),
+							"bomb");
 					break;
-				default:			
+				case 'e':
+					ClientGame.updateBoard(0, 0, Integer.parseInt(playerInfo[1]), Integer.parseInt(playerInfo[2]),
+							"explode");
+					break;
+				case 'w':
+					ClientGame.updateBoard(0, 0, Integer.parseInt(playerInfo[1]), Integer.parseInt(playerInfo[2]),
+							"floor");
+					break;
+				default:
 					ClientGame.updateBoard(Integer.parseInt(playerInfo[2]), Integer.parseInt(playerInfo[3]),
 							Integer.parseInt(playerInfo[4]), Integer.parseInt(playerInfo[5]), playerInfo[6]);
 					ClientGame.updateScore(playerInfo[0], playerInfo[1]);
 					break;
-					
+
 				}
 			} catch (IOException e1) {
 				e1.printStackTrace();

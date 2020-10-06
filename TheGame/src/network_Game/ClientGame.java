@@ -5,10 +5,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.sql.Time;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.JOptionPane;
 
@@ -37,7 +35,7 @@ public class ClientGame extends Application {
 
 	public static Image image_floor;
 	public static Image image_wall;
-	public static Image hero_right, hero_left, hero_up, hero_down,bomb,explode;
+	public static Image hero_right, hero_left, hero_up, hero_down, bomb, explode;
 
 	static String name;
 
@@ -99,15 +97,18 @@ public class ClientGame extends Application {
 			GridPane boardGrid = new GridPane();
 
 			image_wall = new Image(getClass().getResourceAsStream("../game/Image/wall4.png"), size, size, false, false);
-			image_floor = new Image(getClass().getResourceAsStream("../game/Image/floor1.png"), size, size, false, false);
+			image_floor = new Image(getClass().getResourceAsStream("../game/Image/floor1.png"), size, size, false,
+					false);
 
-			hero_right = new Image(getClass().getResourceAsStream("../game/Image/heroRight.png"), size, size, false, false);
-			hero_left = new Image(getClass().getResourceAsStream("../game/Image/heroLeft.png"), size, size, false, false);
+			hero_right = new Image(getClass().getResourceAsStream("../game/Image/heroRight.png"), size, size, false,
+					false);
+			hero_left = new Image(getClass().getResourceAsStream("../game/Image/heroLeft.png"), size, size, false,
+					false);
 			hero_up = new Image(getClass().getResourceAsStream("../game/Image/heroUp.png"), size, size, false, false);
-			hero_down = new Image(getClass().getResourceAsStream("../game/Image/heroDown.png"), size, size, false, false);
+			hero_down = new Image(getClass().getResourceAsStream("../game/Image/heroDown.png"), size, size, false,
+					false);
 			bomb = new Image(getClass().getResourceAsStream("../game/Image/bomb.png"), size, size, false, false);
 			explode = new Image(getClass().getResourceAsStream("../game/Image/explode.png"), size, size, false, false);
-
 
 			fields = new Label[20][20];
 			for (int j = 0; j < 20; j++) {
@@ -182,8 +183,7 @@ public class ClientGame extends Application {
 				fields[oldx][oldy].setGraphic(new ImageView(image_floor));
 			});
 		}
-		
-		
+
 		Platform.runLater(() -> {
 			if (direction.equals("right")) {
 				fields[newx][newy].setGraphic(new ImageView(hero_right));
@@ -213,8 +213,7 @@ public class ClientGame extends Application {
 				fields[newx][newy].setGraphic(new ImageView(image_floor));
 			}
 			;
-			
-			
+
 		});
 
 	}
@@ -225,9 +224,7 @@ public class ClientGame extends Application {
 		});
 	}
 
-
 	public void playerMoved(int delta_x, int delta_y, String direction) throws InterruptedException {
-//		TimeUnit.MILLISECONDS.sleep(100);
 		counter++;
 		sendString = "m" + "#" + name + "#" + delta_x + "#" + delta_y + "#" + direction + "#" + counter + '\n';
 		try {
