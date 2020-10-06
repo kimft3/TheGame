@@ -35,7 +35,7 @@ public class ClientGame extends Application {
 
 	public static Image image_floor;
 	public static Image image_wall;
-	public static Image hero_right, hero_left, hero_up, hero_down,bomb;
+	public static Image hero_right, hero_left, hero_up, hero_down,bomb,explode;
 
 	static String name;
 
@@ -104,7 +104,9 @@ public class ClientGame extends Application {
 			hero_left = new Image(getClass().getResourceAsStream("Image/heroLeft.png"), size, size, false, false);
 			hero_up = new Image(getClass().getResourceAsStream("Image/heroUp.png"), size, size, false, false);
 			hero_down = new Image(getClass().getResourceAsStream("Image/heroDown.png"), size, size, false, false);
-			bomb = new Image(getClass().getResourceAsStream("Image/fireUp.png"), size, size, false, false);
+			bomb = new Image(getClass().getResourceAsStream("Image/bomb.png"), size, size, false, false);
+			explode = new Image(getClass().getResourceAsStream("Image/explode.png"), size, size, false, false);
+
 
 			fields = new Label[20][20];
 			for (int j = 0; j < 20; j++) {
@@ -203,6 +205,16 @@ public class ClientGame extends Application {
 				fields[newx][newy].setGraphic(new ImageView(bomb));
 			}
 			;
+			if (direction.equals("explode")) {
+				fields[newx][newy].setGraphic(new ImageView(explode));
+			}
+			;
+			if (direction.equals("floor")) {
+				fields[newx][newy].setGraphic(new ImageView(image_floor));
+			}
+			;
+			
+			
 		});
 
 	}

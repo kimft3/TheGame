@@ -7,7 +7,7 @@ import java.util.List;
 import network.ServerGame;
 
 public class BombThread extends Thread {
-List<Bomb> bombs=new ArrayList<>();
+	Bomb b;
 	
 	public BombThread() {
 		super();
@@ -30,11 +30,13 @@ List<Bomb> bombs=new ArrayList<>();
 	}
 	
 	public void makeBombs() throws IOException, InterruptedException {
+		while(true) {
 		Thread.sleep(5000);
 		pair p = ServerGame.getRandomFreePosition();
-		Bomb b=new Bomb(p.getX(),p.getY(),5000);
-	bombs.add(b);
-		ServerGame.sendGameUpdate(b);
-	
+		b=new Bomb(p.getX(),p.getY());
+		ServerGame.sendGameUpdate(b,"load");
+		Thread.sleep(5000);
+		ServerGame.sendGameUpdate(b,"expload");
+		}
 	}
 }

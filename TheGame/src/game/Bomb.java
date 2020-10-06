@@ -5,10 +5,9 @@ public class Bomb {
 	int ypos;
 	long timer;
 	
-	public Bomb(int xpos,	int ypos,	long timer) {
+	public Bomb(int xpos,	int ypos) {
 		this.xpos=xpos;
 		this.ypos=ypos;
-		this.timer=timer;
 	}
 	
 	public void setXpos(int xpos) {

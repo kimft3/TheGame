@@ -61,16 +61,35 @@ public class ServerGame {
 	}
 	
 
-	public static void sendGameUpdate(Bomb bomb) throws IOException {
-		for (Player p : players) {
-			String s = "b" + "#"+  bomb.getXpos() + "#" + bomb.getYpos()  + '\n';
-			System.out.println("''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''");
-			p.getOutStream().writeBytes(s);
-
+	public static void sendGameUpdate(Bomb bomb,String action) throws IOException {
+		if(action.equals("load")) {
+			for (Player p : players) {
+				String s = "b" + "#"+  bomb.getXpos() + "#" + bomb.getYpos()  + '\n';
+				System.out.println("''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''");
+				p.getOutStream().writeBytes(s);
+			}
+		}
+		else {
+			for (Player p : players) {
+				String s = "e" + "#"+  bomb.getXpos() + "#" + bomb.getYpos()  + '\n';
+				System.out.println("''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''");
+				p.getOutStream().writeBytes(s);
+			}
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			for (Player p : players) {
+				String s = "w" + "#"+  bomb.getXpos() + "#" + bomb.getYpos()  + '\n';
+				System.out.println("''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''");
+				p.getOutStream().writeBytes(s);
+			}
+			
+			
 		}
 	}
-	
-	
 	
 	
 	
