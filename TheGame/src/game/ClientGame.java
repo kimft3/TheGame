@@ -5,9 +5,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
+
+import javax.swing.JOptionPane;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -34,47 +36,45 @@ public class ClientGame extends Application {
 	public static Image image_wall;
 	public static Image hero_right, hero_left, hero_up, hero_down;
 
-	public static Player me;
-	public static List<Player> players = new ArrayList<Player>();
+	static String name;
 
 	private static Label[][] fields;
-	private TextArea scoreList;
+	private static TextArea scoreList;
 	static String sendString = "";
-	static String receiveString = "";
 
 	static Socket clientSocket;
 	static DataOutputStream outToServer;
+	static ClientThread ct;
+	static HashMap<String, String> playerScore = new HashMap<>();
 
 	public static void main(String args[]) throws Exception {
+		boolean nameNotValid = true;
+		String message = "Enter player name";
+		String reply = "";
+		while (nameNotValid) {
+			name = JOptionPane.showInputDialog(message);
+			clientSocket = new Socket("localhost", 12345);// Connections is established, 3 text (send-receive-send)
+			outToServer = new DataOutputStream(clientSocket.getOutputStream());
+			BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-		clientSocket = new Socket("10.24.1.214", 12345);// Connections is established, 3 text (send-receive-send)
-		(new ClientThread(clientSocket)).start();
+			try {
+				outToServer.writeBytes("j" + "#" + name + "#" + "" + "#" + "" + "#" + '\n');
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.out.println("kurt");
+			}
 
-		outToServer = new DataOutputStream(clientSocket.getOutputStream());
-
-		try {
-			outToServer.writeBytes("j" + "#" + "Kurt" + "#" + "" + "#" + "" + "#" + '\n');
-		} catch (IOException e) {
-			e.printStackTrace();
+			reply = inFromServer.readLine();
+			nameNotValid = reply.contains("Name is taken");
+			if (nameNotValid) {
+				message = "enter a different name";
+			}
 		}
 
+		ct = new ClientThread(clientSocket);
+		ct.start();
 		launch(args);
-		while (true) {
-
-			System.out.println("C Receiving " + receiveString);
-			updateGame(receiveString);
-		}
-
-//		clientSocket.close();// 2 text, send-receive
-
 	}
-
-	// -------------------------------------------
-	// | Maze: (0,0) | Score: (1,0) |
-	// |-----------------------------------------|
-	// | boardGrid (0,1) | scorelist |
-	// | | (1,1) |
-	// -------------------------------------------
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -132,16 +132,32 @@ public class ClientGame extends Application {
 			scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
 				switch (event.getCode()) {
 				case UP:
-					playerMoved(0, -1, "up");
+					try {
+						playerMoved(0, -1, "up");
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 					break;
 				case DOWN:
-					playerMoved(0, +1, "down");
+					try {
+						playerMoved(0, +1, "down");
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 					break;
 				case LEFT:
-					playerMoved(-1, 0, "left");
+					try {
+						playerMoved(-1, 0, "left");
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 					break;
 				case RIGHT:
-					playerMoved(+1, 0, "right");
+					try {
+						playerMoved(+1, 0, "right");
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 					break;
 				default:
 					break;
@@ -153,50 +169,12 @@ public class ClientGame extends Application {
 		}
 	}
 
-	public static void updateGame(String playerInfo) {
-
-		// Setting up standard players
-		String[] info = playerInfo.split("#");
-		me = new Player(info[0], Integer.parseInt(info[1]), Integer.parseInt(info[2]), info[3]);
-		players.add(me);
-		fields[me.getXpos()][me.getYpos()].setGraphic(new ImageView(hero_up));
-
-//Player harry = new Player("Harry",p.getX(),p.getY(),"up");
-//players.add(harry);
-//fields[p.getX()][p.getY()].setGraphic(new ImageView(hero_up));
-//
-//scoreList.setText(getScoreList());
-
-	}
-
-	public pair getRandomFreePosition()
-	// finds a random new position which is not wall
-	// and not occupied by other players
-	{
-		int x = 1;
-		int y = 1;
-		boolean found = false;
-		while (!found) {
-			Random r = new Random();
-			x = Math.abs(r.nextInt() % 18) + 1;
-			y = Math.abs(r.nextInt() % 18) + 1;
-			if (Generel.board[y].charAt(x) == ' ') {
-				found = true;
-				for (Player p : players) {
-					if (p.getXpos() == x && p.getYpos() == y)
-						found = false;
-				}
-
-			}
+	public static void updateBoard(int oldx, int oldy, int newx, int newy, String direction) {
+		if (oldx > 0 && oldy > 0) {
+			Platform.runLater(() -> {
+				fields[oldx][oldy].setGraphic(new ImageView(image_floor));
+			});
 		}
-		pair p = new pair(x, y);
-		return p;
-	}
-
-	public void movePlayerOnScreen(int oldx, int oldy, int newx, int newy, String direction) {
-		Platform.runLater(() -> {
-			fields[oldx][oldy].setGraphic(new ImageView(image_floor));
-		});
 		Platform.runLater(() -> {
 			if (direction.equals("right")) {
 				fields[newx][newy].setGraphic(new ImageView(hero_right));
@@ -218,14 +196,17 @@ public class ClientGame extends Application {
 
 	}
 
-	public void updateScoreTable() {
+	public static void updateScoreTable() {
 		Platform.runLater(() -> {
 			scoreList.setText(getScoreList());
 		});
 	}
 
-	public void playerMoved(int delta_x, int delta_y, String direction) {
-		sendString = "m" + "#" + me.getName() + "#" + delta_x + "#" + delta_y + "#" + direction + '\n';
+//	TODO m tagget bliver kappet af sendt streng heromkring
+	public void playerMoved(int delta_x, int delta_y, String direction) throws InterruptedException {
+		TimeUnit.MILLISECONDS.sleep(100);
+		sendString = "m" + "#" + name + "#" + delta_x + "#" + delta_y + "#" + direction + '\n';
+		System.out.println(sendString);
 		try {
 			outToServer.writeBytes(sendString);
 		} catch (IOException e) {
@@ -233,21 +214,21 @@ public class ClientGame extends Application {
 		}
 	}
 
-	public String getScoreList() {
+	public static String getScoreList() {
 		StringBuffer b = new StringBuffer(100);
-		for (Player p : players) {
-			b.append(p + "\r\n");
+		for (Entry<String, String> entry : playerScore.entrySet()) {
+			b.append(entry + "\r\n");
 		}
 		return b.toString();
 	}
 
-	public Player getPlayerAt(int x, int y) {
-		for (Player p : players) {
-			if (p.getXpos() == x && p.getYpos() == y) {
-				return p;
-			}
+	public static void updateScore(String name, String score) {
+		if (!playerScore.containsKey(name)) {
+			playerScore.put(name, score);
+		} else {
+			playerScore.replace(name, score);
 		}
-		return null;
+		updateScoreTable();
 	}
 
 }
