@@ -150,6 +150,10 @@ public class ServerGame {
 		int x = me.getXpos(), y = me.getYpos();
 		if (Generel.board[y + delta_y].charAt(x + delta_x) == 'w') {
 			me.addPoints(-1);
+		}
+		Bomb b = getBombAt(x + delta_x, y + delta_y);
+		if (b != null) {
+			me.addPoints(-1);
 		} else {
 			Player p = getPlayerAt(x + delta_x, y + delta_y);
 			if (p != null) {
@@ -166,9 +170,17 @@ public class ServerGame {
 			}
 			me.setXpos(x + delta_x);
 			me.setYpos(y + delta_y);
-
 		}
 		sendGameUpdate(me);
+	}
+
+	private static Bomb getBombAt(int x, int y) {
+		for (Bomb b : ServerGame.bombs) {
+			if (b.getXpos() == x && b.getYpos() == y) {
+				return b;
+			}
+		}
+		return null;
 	}
 
 	public static Player getPlayerAt(int x, int y) {

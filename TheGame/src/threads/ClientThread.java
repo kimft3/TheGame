@@ -23,12 +23,8 @@ public class ClientThread extends Thread {
 	public void run() {
 		try {
 			Thread.sleep(1000);
-		} catch (InterruptedException e2) {
-			e2.printStackTrace();
-		}
-		try {
 			inFromServer = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
-		} catch (IOException e) {
+		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
 		while (true) {

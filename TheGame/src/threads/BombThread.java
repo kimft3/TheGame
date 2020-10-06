@@ -28,9 +28,11 @@ public class BombThread extends Thread {
 			Thread.sleep(5000);
 			pair p = ServerGame.getRandomFreePosition();
 			b = new Bomb(p.getX(), p.getY());
+			ServerGame.bombs.add(b);
 			ServerGame.sendGameUpdate(b, "load");
 			Thread.sleep(5000);
 			ServerGame.sendGameUpdate(b, "expload");
+			ServerGame.bombs.remove(b);
 		}
 	}
 }
