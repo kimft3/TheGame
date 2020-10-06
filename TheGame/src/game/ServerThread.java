@@ -11,6 +11,8 @@ import network.ServerGame;
 public class ServerThread extends Thread {
 	Socket serverReceiverSocket;
 	String receiveString = "";
+	BufferedReader inFromClient;
+	DataOutputStream out;
 
 	public ServerThread(Socket serverReceiverSocket) {
 		this.serverReceiverSocket = serverReceiverSocket;
@@ -18,13 +20,17 @@ public class ServerThread extends Thread {
 
 	@Override
 	public void run() {
+		try {
+			inFromClient = new BufferedReader(new InputStreamReader(serverReceiverSocket.getInputStream()));
+			out = new DataOutputStream(serverReceiverSocket.getOutputStream());
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		while (true) {
 			try {
-				BufferedReader inFromClient = new BufferedReader(
-						new InputStreamReader(serverReceiverSocket.getInputStream()));
 				receiveString = inFromClient.readLine();
 				System.out.println("st " + receiveString);
-				DataOutputStream out = new DataOutputStream(serverReceiverSocket.getOutputStream());
+
 				ServerGame.play(receiveString, out);
 			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();

@@ -30,22 +30,24 @@ public class ServerGame {
 //	TODO Bomber
 
 	public static void sendGameUpdate(Player me) throws InterruptedException {
-		TimeUnit.MILLISECONDS.sleep(100);
+//		TimeUnit.MILLISECONDS.sleep(100);
 		try {
 			String playerData = "";
-			if (me.getXposOld() < 1) {				
+			if (me.getXposOld() < 1) {
 				for (Player p : players) {
 					playerData = p.getName() + "#" + p.getPoint() + "#" + 0 + "#" + 0 + "#" + p.getXpos() + "#"
 							+ p.getYpos() + "#" + p.getDirection();
+					System.out.println(playerData);
 					me.getOutStream().writeBytes(playerData + '\n');
-					TimeUnit.MILLISECONDS.sleep(100);
+//					TimeUnit.MILLISECONDS.sleep(100);
 				}
-			} 
-				for (Player p : players) {
-					p.getOutStream().writeBytes(
-							me.getName() + "#" + me.getPoint() + "#" + me.getXposOld() + "#" + me.getYposOld() + "#"
-									+ me.getXpos() + "#" + me.getYpos() + "#" + me.getDirection() + '\n');
-				
+			}
+			for (Player p : players) {
+				String s = me.getName() + "#" + me.getPoint() + "#" + me.getXposOld() + "#" + me.getYposOld() + "#"
+						+ me.getXpos() + "#" + me.getYpos() + "#" + me.getDirection() + '\n';
+				System.out.println(s);
+				p.getOutStream().writeBytes(s);
+
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

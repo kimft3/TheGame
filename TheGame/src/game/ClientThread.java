@@ -19,15 +19,20 @@ public class ClientThread extends Thread {
 
 	@Override
 	public void run() {
+		try {
+			inFromServer = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		while (true) {
 			try {
-				inFromServer = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
 				receiveString = inFromServer.readLine();
-				playerInfo = receiveString.split("#");				
+				System.out.println("ct" + receiveString);
+				playerInfo = receiveString.split("#");
 				ClientGame.updateBoard(Integer.parseInt(playerInfo[2]), Integer.parseInt(playerInfo[3]),
 						Integer.parseInt(playerInfo[4]), Integer.parseInt(playerInfo[5]), playerInfo[6]);
 				ClientGame.updateScore(playerInfo[0], playerInfo[1]);
-				
+
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}

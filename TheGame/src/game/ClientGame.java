@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.sql.Time;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
@@ -47,13 +48,15 @@ public class ClientGame extends Application {
 	static ClientThread ct;
 	static HashMap<String, String> playerScore = new HashMap<>();
 
+	static int counter = 0;
+
 	public static void main(String args[]) throws Exception {
 		boolean nameNotValid = true;
 		String message = "Enter player name";
 		String reply = "";
 		while (nameNotValid) {
 			name = JOptionPane.showInputDialog(message);
-			clientSocket = new Socket("localhost", 12345);// Connections is established, 3 text (send-receive-send)
+			clientSocket = new Socket("10.24.2.214", 12345);// Connections is established, 3 text (send-receive-send)
 			outToServer = new DataOutputStream(clientSocket.getOutputStream());
 			BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
@@ -204,9 +207,10 @@ public class ClientGame extends Application {
 
 //	TODO m tagget bliver kappet af sendt streng heromkring
 	public void playerMoved(int delta_x, int delta_y, String direction) throws InterruptedException {
-		TimeUnit.MILLISECONDS.sleep(100);
-		sendString = "m" + "#" + name + "#" + delta_x + "#" + delta_y + "#" + direction + '\n';
-		System.out.println(sendString);
+//		TimeUnit.MILLISECONDS.sleep(100);
+		counter++;
+		sendString = "m" + "#" + name + "#" + delta_x + "#" + delta_y + "#" + direction + "#" + counter + '\n';
+		System.out.println(sendString + " sendt klk " + System.currentTimeMillis() + " counter " + counter);
 		try {
 			outToServer.writeBytes(sendString);
 		} catch (IOException e) {
