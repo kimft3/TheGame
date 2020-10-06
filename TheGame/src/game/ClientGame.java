@@ -35,7 +35,7 @@ public class ClientGame extends Application {
 
 	public static Image image_floor;
 	public static Image image_wall;
-	public static Image hero_right, hero_left, hero_up, hero_down;
+	public static Image hero_right, hero_left, hero_up, hero_down,bomb;
 
 	static String name;
 
@@ -56,7 +56,7 @@ public class ClientGame extends Application {
 		String reply = "";
 		while (nameNotValid) {
 			name = JOptionPane.showInputDialog(message);
-			clientSocket = new Socket("10.24.2.214", 12345);// Connections is established, 3 text (send-receive-send)
+			clientSocket = new Socket("localhost", 12345);// Connections is established, 3 text (send-receive-send)
 			outToServer = new DataOutputStream(clientSocket.getOutputStream());
 			BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
@@ -104,6 +104,7 @@ public class ClientGame extends Application {
 			hero_left = new Image(getClass().getResourceAsStream("Image/heroLeft.png"), size, size, false, false);
 			hero_up = new Image(getClass().getResourceAsStream("Image/heroUp.png"), size, size, false, false);
 			hero_down = new Image(getClass().getResourceAsStream("Image/heroDown.png"), size, size, false, false);
+//			bomb = new Image(getClass().getResourceAsStream("Image/fireUp.png"), size, size, false, false);
 
 			fields = new Label[20][20];
 			for (int j = 0; j < 20; j++) {
@@ -173,11 +174,14 @@ public class ClientGame extends Application {
 	}
 
 	public static void updateBoard(int oldx, int oldy, int newx, int newy, String direction) {
+		System.out.println(oldx+" "+oldy+" "+newx+" "+newy +" "+direction );
 		if (oldx > 0 && oldy > 0) {
 			Platform.runLater(() -> {
 				fields[oldx][oldy].setGraphic(new ImageView(image_floor));
 			});
 		}
+		
+		
 		Platform.runLater(() -> {
 			if (direction.equals("right")) {
 				fields[newx][newy].setGraphic(new ImageView(hero_right));
@@ -195,6 +199,10 @@ public class ClientGame extends Application {
 				fields[newx][newy].setGraphic(new ImageView(hero_down));
 			}
 			;
+//			if (direction.equals("bomb")) {
+//				fields[newx][newy].setGraphic(new ImageView(bomb));
+//			}
+//			;
 		});
 
 	}
@@ -210,7 +218,6 @@ public class ClientGame extends Application {
 //		TimeUnit.MILLISECONDS.sleep(100);
 		counter++;
 		sendString = "m" + "#" + name + "#" + delta_x + "#" + delta_y + "#" + direction + "#" + counter + '\n';
-		System.out.println(sendString + " sendt klk " + System.currentTimeMillis() + " counter " + counter);
 		try {
 			outToServer.writeBytes(sendString);
 		} catch (IOException e) {

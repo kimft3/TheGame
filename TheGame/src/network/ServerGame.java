@@ -9,13 +9,17 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import game.Bomb;
+import game.BombThread;
 import game.Generel;
 import game.Player;
 import game.ServerThread;
 import game.pair;
 
 public class ServerGame {
-	public static List<Player> players = new ArrayList<Player>();
+	public static List<Player> players = new ArrayList<>();
+	public static List<Bomb> bombs=new ArrayList<>();
+
 
 	@SuppressWarnings("resource")
 	public static void main(String[] args) throws Exception {
@@ -24,6 +28,8 @@ public class ServerGame {
 			Socket connectionSocket = talk.accept();
 			ServerThread st = (new ServerThread(connectionSocket));
 			st.start();
+//			BombThread bt=new BombThread();
+//			bt.start();
 		}
 	}
 
@@ -37,7 +43,7 @@ public class ServerGame {
 				for (Player p : players) {
 					playerData = p.getName() + "#" + p.getPoint() + "#" + 0 + "#" + 0 + "#" + p.getXpos() + "#"
 							+ p.getYpos() + "#" + p.getDirection();
-					System.out.println(playerData);
+					System.out.println(playerData+11);
 					me.getOutStream().writeBytes(playerData + '\n');
 //					TimeUnit.MILLISECONDS.sleep(100);
 				}
@@ -45,7 +51,7 @@ public class ServerGame {
 			for (Player p : players) {
 				String s = me.getName() + "#" + me.getPoint() + "#" + me.getXposOld() + "#" + me.getYposOld() + "#"
 						+ me.getXpos() + "#" + me.getYpos() + "#" + me.getDirection() + '\n';
-				System.out.println(s);
+				System.out.println(s+22);
 				p.getOutStream().writeBytes(s);
 
 			}
@@ -53,6 +59,21 @@ public class ServerGame {
 			e.printStackTrace();
 		}
 	}
+	
+
+//	public static void sendGameUpdate(Bomb bomb) throws IOException {
+//		for (Player p : players) {
+//			String s = "b" + "#"+  bomb.getXpos() + "#" + bomb.getYpos()  + '\n';
+//			System.out.println(s);
+//			p.getOutStream().writeBytes(s);
+//
+//		}
+//	}
+	
+	
+	
+	
+	
 
 	public static boolean isNameUnique(String name) {
 		for (Player p : players) {
@@ -113,6 +134,10 @@ public class ServerGame {
 					if (p.getXpos() == x && p.getYpos() == y)
 						found = false;
 				}
+//				for (Bomb b : bombs) {
+//					if (b.getXpos() == x && b.getYpos() == y)
+//						found = false;
+//				}
 			}
 		}
 		pair p = new pair(x, y);
