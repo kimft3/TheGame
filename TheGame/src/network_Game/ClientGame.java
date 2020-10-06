@@ -1,4 +1,4 @@
-package game;
+package network_Game;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -26,6 +26,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import objects.Generel;
+import threads.ClientThread;
 
 public class ClientGame extends Application {
 
@@ -64,7 +66,6 @@ public class ClientGame extends Application {
 				outToServer.writeBytes("j" + "#" + name + "#" + "" + "#" + "" + "#" + '\n');
 			} catch (IOException e) {
 				e.printStackTrace();
-				System.out.println("kurt");
 			}
 
 			reply = inFromServer.readLine();
@@ -97,15 +98,15 @@ public class ClientGame extends Application {
 
 			GridPane boardGrid = new GridPane();
 
-			image_wall = new Image(getClass().getResourceAsStream("Image/wall4.png"), size, size, false, false);
-			image_floor = new Image(getClass().getResourceAsStream("Image/floor1.png"), size, size, false, false);
+			image_wall = new Image(getClass().getResourceAsStream("../game/Image/wall4.png"), size, size, false, false);
+			image_floor = new Image(getClass().getResourceAsStream("../game/Image/floor1.png"), size, size, false, false);
 
-			hero_right = new Image(getClass().getResourceAsStream("Image/heroRight.png"), size, size, false, false);
-			hero_left = new Image(getClass().getResourceAsStream("Image/heroLeft.png"), size, size, false, false);
-			hero_up = new Image(getClass().getResourceAsStream("Image/heroUp.png"), size, size, false, false);
-			hero_down = new Image(getClass().getResourceAsStream("Image/heroDown.png"), size, size, false, false);
-			bomb = new Image(getClass().getResourceAsStream("Image/bomb.png"), size, size, false, false);
-			explode = new Image(getClass().getResourceAsStream("Image/explode.png"), size, size, false, false);
+			hero_right = new Image(getClass().getResourceAsStream("../game/Image/heroRight.png"), size, size, false, false);
+			hero_left = new Image(getClass().getResourceAsStream("../game/Image/heroLeft.png"), size, size, false, false);
+			hero_up = new Image(getClass().getResourceAsStream("../game/Image/heroUp.png"), size, size, false, false);
+			hero_down = new Image(getClass().getResourceAsStream("../game/Image/heroDown.png"), size, size, false, false);
+			bomb = new Image(getClass().getResourceAsStream("../game/Image/bomb.png"), size, size, false, false);
+			explode = new Image(getClass().getResourceAsStream("../game/Image/explode.png"), size, size, false, false);
 
 
 			fields = new Label[20][20];
@@ -176,7 +177,6 @@ public class ClientGame extends Application {
 	}
 
 	public static void updateBoard(int oldx, int oldy, int newx, int newy, String direction) {
-		System.out.println(oldx+" "+oldy+" "+newx+" "+newy +" "+direction );
 		if (oldx > 0 && oldy > 0) {
 			Platform.runLater(() -> {
 				fields[oldx][oldy].setGraphic(new ImageView(image_floor));

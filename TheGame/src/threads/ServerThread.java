@@ -1,4 +1,4 @@
-package game;
+package threads;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-import network.ServerGame;
+import network_Game.ServerGame;
 
 public class ServerThread extends Thread {
 	Socket serverReceiverSocket;
@@ -29,8 +29,6 @@ public class ServerThread extends Thread {
 		while (true) {
 			try {
 				receiveString = inFromClient.readLine();
-				System.out.println("st " + receiveString);
-
 				ServerGame.play(receiveString, out);
 			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();

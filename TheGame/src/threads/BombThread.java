@@ -1,10 +1,12 @@
-package game;
+package threads;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import network.ServerGame;
+import network_Game.ServerGame;
+import objects.Bomb;
+import objects.pair;
 
 public class BombThread extends Thread {
 	Bomb b;

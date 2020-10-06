@@ -1,9 +1,11 @@
-package game;
+package threads;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+
+import network_Game.ClientGame;
 
 public class ClientThread extends Thread {
 	Socket serverSocket;
@@ -33,7 +35,6 @@ public class ClientThread extends Thread {
 		while (true) {
 			try {
 				receiveString = inFromServer.readLine();
-				System.out.println("ct" + receiveString);
 				playerInfo = receiveString.split("#");
 				char action =playerInfo[0].charAt(0);
 				switch(action) {
