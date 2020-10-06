@@ -35,14 +35,15 @@ public class ClientThread extends Thread {
 				receiveString = inFromServer.readLine();
 				System.out.println("ct" + receiveString);
 				playerInfo = receiveString.split("#");
-//				if(!playerInfo[0].equals("b")) {
+				if(!playerInfo[0].equals("b")) {
 				ClientGame.updateBoard(Integer.parseInt(playerInfo[2]), Integer.parseInt(playerInfo[3]),
 						Integer.parseInt(playerInfo[4]), Integer.parseInt(playerInfo[5]), playerInfo[6]);
 				ClientGame.updateScore(playerInfo[0], playerInfo[1]);
-//				}else {
-//					
-//					
-//				}
+				}else {
+					ClientGame.updateBoard(0, 0,
+							Integer.parseInt(playerInfo[1]), Integer.parseInt(playerInfo[2]), "bomb");
+					
+				}
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}

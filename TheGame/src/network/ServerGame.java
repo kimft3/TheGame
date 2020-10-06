@@ -28,8 +28,8 @@ public class ServerGame {
 			Socket connectionSocket = talk.accept();
 			ServerThread st = (new ServerThread(connectionSocket));
 			st.start();
-//			BombThread bt=new BombThread();
-//			bt.start();
+			BombThread bt=new BombThread();
+			bt.start();
 		}
 	}
 
@@ -61,14 +61,14 @@ public class ServerGame {
 	}
 	
 
-//	public static void sendGameUpdate(Bomb bomb) throws IOException {
-//		for (Player p : players) {
-//			String s = "b" + "#"+  bomb.getXpos() + "#" + bomb.getYpos()  + '\n';
-//			System.out.println(s);
-//			p.getOutStream().writeBytes(s);
-//
-//		}
-//	}
+	public static void sendGameUpdate(Bomb bomb) throws IOException {
+		for (Player p : players) {
+			String s = "b" + "#"+  bomb.getXpos() + "#" + bomb.getYpos()  + '\n';
+			System.out.println("''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''");
+			p.getOutStream().writeBytes(s);
+
+		}
+	}
 	
 	
 	
@@ -134,10 +134,10 @@ public class ServerGame {
 					if (p.getXpos() == x && p.getYpos() == y)
 						found = false;
 				}
-//				for (Bomb b : bombs) {
-//					if (b.getXpos() == x && b.getYpos() == y)
-//						found = false;
-//				}
+				for (Bomb b : bombs) {
+					if (b.getXpos() == x && b.getYpos() == y)
+						found = false;
+				}
 			}
 		}
 		pair p = new pair(x, y);

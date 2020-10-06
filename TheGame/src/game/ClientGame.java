@@ -104,7 +104,7 @@ public class ClientGame extends Application {
 			hero_left = new Image(getClass().getResourceAsStream("Image/heroLeft.png"), size, size, false, false);
 			hero_up = new Image(getClass().getResourceAsStream("Image/heroUp.png"), size, size, false, false);
 			hero_down = new Image(getClass().getResourceAsStream("Image/heroDown.png"), size, size, false, false);
-//			bomb = new Image(getClass().getResourceAsStream("Image/fireUp.png"), size, size, false, false);
+			bomb = new Image(getClass().getResourceAsStream("Image/fireUp.png"), size, size, false, false);
 
 			fields = new Label[20][20];
 			for (int j = 0; j < 20; j++) {
@@ -199,10 +199,10 @@ public class ClientGame extends Application {
 				fields[newx][newy].setGraphic(new ImageView(hero_down));
 			}
 			;
-//			if (direction.equals("bomb")) {
-//				fields[newx][newy].setGraphic(new ImageView(bomb));
-//			}
-//			;
+			if (direction.equals("bomb")) {
+				fields[newx][newy].setGraphic(new ImageView(bomb));
+			}
+			;
 		});
 
 	}
@@ -213,7 +213,7 @@ public class ClientGame extends Application {
 		});
 	}
 
-//	TODO m tagget bliver kappet af sendt streng heromkring
+
 	public void playerMoved(int delta_x, int delta_y, String direction) throws InterruptedException {
 //		TimeUnit.MILLISECONDS.sleep(100);
 		counter++;
