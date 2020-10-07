@@ -148,11 +148,8 @@ public class ServerGame {
 			throws InterruptedException {
 		me.setDirection(direction);
 		int x = me.getXpos(), y = me.getYpos();
-		if (Generel.board[y + delta_y].charAt(x + delta_x) == 'w') {
-			me.addPoints(-1);
-		}
 		Bomb b = getBombAt(x + delta_x, y + delta_y);
-		if (b != null) {
+		if (Generel.board[y + delta_y].charAt(x + delta_x) == 'w' || b != null) {
 			me.addPoints(-1);
 		} else {
 			Player p = getPlayerAt(x + delta_x, y + delta_y);
