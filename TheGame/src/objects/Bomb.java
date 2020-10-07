@@ -3,7 +3,7 @@ package objects;
 public class Bomb {
 	int xpos;
 	int ypos;
-	long timer;
+	boolean bombExplode=false;
 
 	public Bomb(int xpos, int ypos) {
 		this.xpos = xpos;
@@ -26,12 +26,15 @@ public class Bomb {
 		return ypos;
 	}
 
-	public void setTimer(long timer) {
-		this.timer = timer;
+	public boolean getBombExplode() {
+		return this.bombExplode;
 	}
-
-	public long getTimer() {
-		return timer;
+	public void setBobExplode() {
+		this.bombExplode=true;
 	}
-
+	
+	@Override
+	public String toString() {
+		return "b"+"#"+xpos+"#"+ypos;
+	}
 }

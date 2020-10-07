@@ -34,16 +34,16 @@ public class ServerGame {
 	public static void sendGameUpdate(Player me) throws InterruptedException {
 		try {
 			String playerData = "";
-			if (me.getXposOld() < 1) { // new player
+			if (me.getXposOld() == -2) { // new player
 				for (Player p : players) {
-					playerData = p.getName() + "#" + p.getPoint() + "#" + 0 + "#" + 0 + "#" + p.getXpos() + "#"
-							+ p.getYpos() + "#" + p.getDirection();
+					playerData = "m" + "#" + p.getName() + "#" + p.getPoint() + "#" + 0 + "#" + 0 + "#" + p.getXpos()
+							+ "#" + p.getYpos() + "#" + p.getDirection();
 					me.getOutStream().writeBytes(playerData + '\n');
 				}
 			}
 			for (Player p : players) {
-				String s = me.getName() + "#" + me.getPoint() + "#" + me.getXposOld() + "#" + me.getYposOld() + "#"
-						+ me.getXpos() + "#" + me.getYpos() + "#" + me.getDirection() + '\n';
+				String s = "m" + "#" + me.getName() + "#" + me.getPoint() + "#" + me.getXposOld() + "#"
+						+ me.getYposOld() + "#" + me.getXpos() + "#" + me.getYpos() + "#" + me.getDirection() + '\n';
 				p.getOutStream().writeBytes(s);
 			}
 		} catch (IOException e) {
@@ -51,7 +51,7 @@ public class ServerGame {
 		}
 	}
 
-	public static void sendGameUpdate(Bomb bomb, String action) throws IOException {
+	public static synchronized void sendGameUpdate(Bomb bomb, String action) throws IOException {
 		if (action.equals("load")) {
 			for (Player p : players) {
 				String s = "b" + "#" + bomb.getXpos() + "#" + bomb.getYpos() + '\n';
@@ -91,7 +91,7 @@ public class ServerGame {
 		char id = playerMessage[0].charAt(0);
 		switch (id) {
 		case 'j':
-			if (!ServerGame.isNameUnique(playerName)) {
+			if (!isNameUnique(playerName)) {
 				try {
 					(outToClient).writeBytes("Name is taken" + '\n');
 				} catch (IOException e) {
@@ -110,12 +110,17 @@ public class ServerGame {
 			}
 			break;
 		case 'm':
-			for (Player pl : ServerGame.players) {
+			for (Player pl : players) {
 				if (pl.getName().equals(playerMessage[1])) {
 					updatePlayer(pl, Integer.parseInt(playerMessage[2]), Integer.parseInt(playerMessage[3]),
 							playerMessage[4]);
 				}
 			}
+			break;
+		case 'b':
+
+			updatePlayer(null, Integer.parseInt(playerMessage[1]), Integer.parseInt(playerMessage[2]), null);
+
 			break;
 		}
 	}
@@ -146,33 +151,57 @@ public class ServerGame {
 
 	public synchronized static void updatePlayer(Player me, int delta_x, int delta_y, String direction)
 			throws InterruptedException {
-		me.setDirection(direction);
-		int x = me.getXpos(), y = me.getYpos();
-		Bomb b = getBombAt(x + delta_x, y + delta_y);
-		if (Generel.board[y + delta_y].charAt(x + delta_x) == 'w' || b != null) {
-			me.addPoints(-1);
+		if (me == null) {
+			updatePlayerExploded(delta_x, delta_y);
 		} else {
-			Player p = getPlayerAt(x + delta_x, y + delta_y);
-			if (p != null) {
-				me.addPoints(10);
-				p.addPoints(-10);
-				pair pa = getRandomFreePosition();
-				p.setXpos(pa.getX());
-				p.setYpos(pa.getY());
-				p.setXposOld(-1);
-				p.setYposOld(-1);
-				sendGameUpdate(p);
+			me.setDirection(direction);
+			int x = me.getXpos(), y = me.getYpos();
+			Bomb b = getBombAt(x + delta_x, y + delta_y);
+			if (Generel.board[y + delta_y].charAt(x + delta_x) == 'w') {
+				me.addPoints(-1);
+			} else if (b != null) {
+				// do nothing-------------------------------
 			} else {
-				me.addPoints(1);
+				Player p = getPlayerAt(x + delta_x, y + delta_y);
+				if (p != null) {
+					me.addPoints(10);
+					p.addPoints(-10);
+					pair pa = getRandomFreePosition();
+					p.setXpos(pa.getX());
+					p.setYpos(pa.getY());
+					p.setXposOld(-1);
+					p.setYposOld(-1);
+					sendGameUpdate(p);
+				} else {
+					me.addPoints(1);
+				}
+				me.setXpos(x + delta_x);
+				me.setYpos(y + delta_y);
 			}
-			me.setXpos(x + delta_x);
-			me.setYpos(y + delta_y);
+			sendGameUpdate(me);
 		}
-		sendGameUpdate(me);
+	}
+
+	private static void updatePlayerExploded(int x, int y) throws InterruptedException {
+		List<Player> playersToExplode = new ArrayList<>();
+		for (int delta_x = -1; delta_x < 2; delta_x++) {
+			for (int delta_y = -1; delta_y < 2; delta_y++) {
+				playersToExplode.add(getPlayerAt(x + delta_x, y + delta_y));
+			}
+			for (Player p : playersToExplode) {
+				if (p != null) {
+					p.addPoints(-50);
+					pair pa = getRandomFreePosition();
+					p.setXpos(pa.getX());
+					p.setYpos(pa.getY());
+					sendGameUpdate(p);
+				}
+			}
+		}
 	}
 
 	private static Bomb getBombAt(int x, int y) {
-		for (Bomb b : ServerGame.bombs) {
+		for (Bomb b : bombs) {
 			if (b.getXpos() == x && b.getYpos() == y) {
 				return b;
 			}
@@ -181,7 +210,7 @@ public class ServerGame {
 	}
 
 	public static Player getPlayerAt(int x, int y) {
-		for (Player p : ServerGame.players) {
+		for (Player p : players) {
 			if (p.getXpos() == x && p.getYpos() == y) {
 				return p;
 			}
