@@ -46,9 +46,9 @@ public class ClientThread extends Thread {
 							"floor");
 					break;
 				default:
-					ClientGame.updateBoard(Integer.parseInt(playerInfo[2]), Integer.parseInt(playerInfo[3]),
-							Integer.parseInt(playerInfo[4]), Integer.parseInt(playerInfo[5]), playerInfo[6]);
-					ClientGame.updateScore(playerInfo[0], playerInfo[1]);
+					ClientGame.updateBoard(Integer.parseInt(playerInfo[3]), Integer.parseInt(playerInfo[4]),
+							Integer.parseInt(playerInfo[5]), Integer.parseInt(playerInfo[6]), playerInfo[7]);
+					ClientGame.updateScore(playerInfo[1], playerInfo[2]);
 					break;
 
 				}

@@ -9,8 +9,8 @@ public class Player {
 	int point;
 	String direction;
 
-	int xposOld = -1;
-	int yposOld = -1;
+	int xposOld = -2;
+	int yposOld = -2;
 
 	DataOutputStream outStream;
 
