@@ -25,12 +25,12 @@ public class BombThread extends Thread {
 
 	public void makeBombs() throws IOException, InterruptedException {
 		while (true) {
-			Thread.sleep(5000);
+			Thread.sleep(5000); // Making bombs appear with interval
 			pair p = ServerGame.getRandomFreePosition();
 			b = new Bomb(p.getX(), p.getY());
 			ServerGame.bombs.add(b);
 			ServerGame.sendGameUpdate(b, "load");
-			Thread.sleep(5000);
+			Thread.sleep(5000); // allowing bombs to be visible before exploding
 			ServerGame.sendGameUpdate(b, "expload");
 			b.setBobExplode();
 			ServerGame.play(b.toString(), null);

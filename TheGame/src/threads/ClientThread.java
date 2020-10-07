@@ -45,7 +45,7 @@ public class ClientThread extends Thread {
 					ClientGame.updateBoard(0, 0, Integer.parseInt(playerInfo[1]), Integer.parseInt(playerInfo[2]),
 							"floor");
 					break;
-				default:
+				default: //the last option a move from a player
 					ClientGame.updateBoard(Integer.parseInt(playerInfo[3]), Integer.parseInt(playerInfo[4]),
 							Integer.parseInt(playerInfo[5]), Integer.parseInt(playerInfo[6]), playerInfo[7]);
 					ClientGame.updateScore(playerInfo[1], playerInfo[2]);

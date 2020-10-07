@@ -34,7 +34,7 @@ public class ServerGame {
 	public static void sendGameUpdate(Player me) throws InterruptedException {
 		try {
 			String playerData = "";
-			if (me.getXposOld() == -2) { // new player
+			if (me.getXposOld() == -2) { // new player, all players current status is send
 				for (Player p : players) {
 					playerData = "m" + "#" + p.getName() + "#" + p.getPoint() + "#" + 0 + "#" + 0 + "#" + p.getXpos()
 							+ "#" + p.getYpos() + "#" + p.getDirection();
@@ -63,7 +63,7 @@ public class ServerGame {
 				p.getOutStream().writeBytes(s);
 			}
 			try {
-				Thread.sleep(200);
+				Thread.sleep(200); // Making the explosion visible, and a small lack--------------
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -90,7 +90,7 @@ public class ServerGame {
 		playerName = playerMessage[1];
 		char id = playerMessage[0].charAt(0);
 		switch (id) {
-		case 'j':
+		case 'j': //new player j(oining)
 			if (!isNameUnique(playerName)) {
 				try {
 					(outToClient).writeBytes("Name is taken" + '\n');
@@ -109,7 +109,7 @@ public class ServerGame {
 				sendGameUpdate(newPlayer);
 			}
 			break;
-		case 'm':
+		case 'm': //player m(oving)
 			for (Player pl : players) {
 				if (pl.getName().equals(playerMessage[1])) {
 					updatePlayer(pl, Integer.parseInt(playerMessage[2]), Integer.parseInt(playerMessage[3]),
@@ -117,10 +117,8 @@ public class ServerGame {
 				}
 			}
 			break;
-		case 'b':
-
+		case 'b': // bomb exploding
 			updatePlayer(null, Integer.parseInt(playerMessage[1]), Integer.parseInt(playerMessage[2]), null);
-
 			break;
 		}
 	}
@@ -151,7 +149,7 @@ public class ServerGame {
 
 	public synchronized static void updatePlayer(Player me, int delta_x, int delta_y, String direction)
 			throws InterruptedException {
-		if (me == null) {
+		if (me == null) { //call from bomb thread, using same method because of synchronizing
 			updatePlayerExploded(delta_x, delta_y);
 		} else {
 			me.setDirection(direction);
@@ -184,7 +182,7 @@ public class ServerGame {
 
 	private static void updatePlayerExploded(int x, int y) throws InterruptedException {
 		List<Player> playersToExplode = new ArrayList<>();
-		for (int delta_x = -1; delta_x < 2; delta_x++) {
+		for (int delta_x = -1; delta_x < 2; delta_x++) { // finding all players around the bomb
 			for (int delta_y = -1; delta_y < 2; delta_y++) {
 				playersToExplode.add(getPlayerAt(x + delta_x, y + delta_y));
 			}

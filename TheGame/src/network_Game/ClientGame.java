@@ -56,10 +56,9 @@ public class ClientGame extends Application {
 		String reply = "";
 		while (nameNotValid) {
 			name = JOptionPane.showInputDialog(message);
-			clientSocket = new Socket("localhost", 12345);// Connections is established, 3 text (send-receive-send)
+			clientSocket = new Socket("localhost", 12345);
 			outToServer = new DataOutputStream(clientSocket.getOutputStream());
 			BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
 			try {
 				outToServer.writeBytes("j" + "#" + name + "#" + "" + "#" + "" + "#" + '\n');
 			} catch (IOException e) {
@@ -72,7 +71,6 @@ public class ClientGame extends Application {
 				message = "enter a different name";
 			}
 		}
-
 		ct = new ClientThread(clientSocket);
 		ct.start();
 		launch(args);
