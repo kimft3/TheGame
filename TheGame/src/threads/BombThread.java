@@ -33,7 +33,7 @@ public class BombThread extends Thread {
 			Thread.sleep(5000);
 			ServerGame.sendGameUpdate(b, "expload");
 			b.setBobExplode();
-			Thread.sleep(1000);
+			ServerGame.play(b.toString(), null);
 			ServerGame.bombs.remove(b);
 		}
 	}

@@ -32,4 +32,9 @@ public class Bomb {
 	public void setBobExplode() {
 		this.bombExplode=true;
 	}
+	
+	@Override
+	public String toString() {
+		return "b"+"#"+xpos+"#"+ypos;
+	}
 }
