@@ -107,8 +107,8 @@ public class ClientGame extends Application {
 			hero_up = new Image(getClass().getResourceAsStream("../game/Image/heroUp.png"), size, size, false, false);
 			hero_down = new Image(getClass().getResourceAsStream("../game/Image/heroDown.png"), size, size, false,
 					false);
-			bomb = new Image(getClass().getResourceAsStream("../game/Image/bomb.png"), size, size, false, false);
-			explode = new Image(getClass().getResourceAsStream("../game/Image/explode.png"), size, size, false, false);
+			bomb = new Image(getClass().getResourceAsStream("../game/Image/Package.png"), size, size, false, false);
+			explode = new Image(getClass().getResourceAsStream("../game/Image/packBomb.png"), size, size, false, false);
 
 			fields = new Label[20][20];
 			for (int j = 0; j < 20; j++) {
