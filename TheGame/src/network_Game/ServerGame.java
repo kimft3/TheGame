@@ -63,7 +63,7 @@ public class ServerGame {
 				p.getOutStream().writeBytes(s);
 			}
 			try {
-				Thread.sleep(200); // Making the explosion visible, and a small lack--------------
+				Thread.sleep(150); // Making the explosion visible, and a small lag--------------
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
