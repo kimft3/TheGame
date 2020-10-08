@@ -26,8 +26,7 @@ public class ServerGame {
 			Socket connectionSocket = talk.accept();
 			ServerThread st = (new ServerThread(connectionSocket));
 			st.start();
-			BombThread bt = new BombThread();
-			bt.start();
+			
 		}
 	}
 
@@ -105,6 +104,8 @@ public class ServerGame {
 				}
 				pair p = getRandomFreePosition();
 				Player newPlayer = new Player(playerName, p.getX(), p.getY(), "up", outToClient);
+				BombThread bt = new BombThread();
+				bt.start();
 				players.add(newPlayer);
 				sendGameUpdate(newPlayer);
 			}
