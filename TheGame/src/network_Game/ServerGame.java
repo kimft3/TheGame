@@ -34,7 +34,7 @@ public class ServerGame {
 			String playerData = "";
 			if (me.getDirection() == null) { // player quitting
 				players.remove(players.indexOf(me));
-				if(players.size()>0) {
+				if(players.size()>0) { // The above line could be the last player
 				for (Player p : players) {
 					playerData = "q" + "#" + me.getName() + "#" + me.getXpos() + "#" + me.getYpos();
 					p.getOutStream().writeBytes(playerData + '\n');
@@ -138,9 +138,7 @@ public class ServerGame {
 			break;
 		
 		case 'q': //player leaving
-			System.out.println("I'm leaving");
 			if(players.size()>0) {
-				System.out.println(players.toString());
 			for (Player pl : players) {
 				if (pl.getName().equals(playerMessage[1])) {
 					updatePlayer(pl, pl.getXpos(), pl.getYpos(),
@@ -179,10 +177,7 @@ public class ServerGame {
 	public synchronized static void updatePlayer(Player me, int delta_x, int delta_y, String direction)
 			throws InterruptedException {
 	if(direction==null) {
-		System.out.println("me too");
 		me.setDirection(direction);
-
-//		players.remove(players.indexOf(me));
 		sendGameUpdate(me);
 	}
 		

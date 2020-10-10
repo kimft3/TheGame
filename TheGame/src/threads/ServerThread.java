@@ -33,10 +33,8 @@ public class ServerThread extends Thread {
 				receiveString = inFromClient.readLine();
 				
 				ServerGame.play(receiveString, out);
-			} catch (IOException | InterruptedException e) {
-	
-				System.out.println("l-35 serverthread");
-				play=false;
+			} catch (IOException | InterruptedException e) { // No connection, threads ends
+		play=false;
 				
 			}
 		}
