@@ -78,6 +78,15 @@ public class ClientGame extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
+		primaryStage.setOnCloseRequest((event) -> {
+	    System.out.println("Closing Stage");
+	    sendString = "q" + "#" + name + '\n';
+			try {
+				outToServer.writeBytes(sendString);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	});
 		try {
 			GridPane grid = new GridPane();
 			grid.setHgap(10);
@@ -242,10 +251,14 @@ public class ClientGame extends Application {
 
 	public static void updateScore(String name, String score) {
 		if (!playerScore.containsKey(name)) {
+			
 			playerScore.put(name, score);
 		} else {
+if(score==null) {
+				playerScore.remove(name);
+			}else {
 			playerScore.replace(name, score);
-		}
+		}}
 		updateScoreTable();
 	}
 
