@@ -67,7 +67,7 @@ public class ClientThread extends Thread {
 				JOptionPane.showMessageDialog(f, "Ingen forbindelse til server");
 
 				play=false;
-				ClientGame.
+				
 			}
 		}
 
