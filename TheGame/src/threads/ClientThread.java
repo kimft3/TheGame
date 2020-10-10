@@ -22,7 +22,6 @@ public class ClientThread extends Thread {
 		this.serverSocket = server;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {
 		try {

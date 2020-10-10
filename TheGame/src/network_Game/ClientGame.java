@@ -45,15 +45,16 @@ public class ClientGame extends Application {
 
 	static Socket clientSocket;
 	static DataOutputStream outToServer;
-	static ClientThread ct;
 	static HashMap<String, String> playerScore = new HashMap<>();
-
+	static ClientThread ct;
 	static int counter = 0;
 
 	public static void main(String args[]) throws Exception {
 		boolean nameNotValid = true;
 		String message = "Enter player name";
 		String reply = "";
+		
+		
 		while (nameNotValid) {
 			name = JOptionPane.showInputDialog(message);
 			clientSocket = new Socket("localhost", 12345);
@@ -70,12 +71,17 @@ public class ClientGame extends Application {
 			if (nameNotValid) {
 				message = "enter a different name";
 			}
-		}
+			else {
+				
+				
+			}
+			}
 		ct = new ClientThread(clientSocket);
 		ct.start();
 		launch(args);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void start(Stage primaryStage) {
 		primaryStage.setOnCloseRequest((event) -> {
@@ -83,9 +89,12 @@ public class ClientGame extends Application {
 	    sendString = "q" + "#" + name + '\n';
 			try {
 				outToServer.writeBytes(sendString);
+				ct.stop();
+			
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			System.exit(1);
 	});
 		try {
 			GridPane grid = new GridPane();

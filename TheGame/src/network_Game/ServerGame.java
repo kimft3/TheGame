@@ -32,12 +32,13 @@ public class ServerGame {
 	public static void sendGameUpdate(Player me) throws InterruptedException {
 		try {
 			String playerData = "";
-			if (me.getDirection() == null) { // new player, all players current status is send
-				System.out.println("also here");
+			if (me.getDirection() == null) { // player quitting
+				players.remove(players.indexOf(me));
+				if(players.size()>0) {
 				for (Player p : players) {
 					playerData = "q" + "#" + me.getName() + "#" + me.getXpos() + "#" + me.getYpos();
 					p.getOutStream().writeBytes(playerData + '\n');
-				}
+				}}
 			}
 			else{
 			if (me.getXposOld() == -2) { // new player, all players current status is send
@@ -94,9 +95,9 @@ public class ServerGame {
 
 	public static synchronized void play(String receiveString, DataOutputStream outToClient)
 			throws InterruptedException {
-//		if(receiveString == null) {
-////			System.out.println("tadahh");
-//		}else {
+		if(receiveString == null) {
+//			System.out.println("tadahh");
+		}else {
 		String[] playerMessage = receiveString.split("#");
 		String playerName;
 		playerName = playerMessage[1];
@@ -138,15 +139,18 @@ public class ServerGame {
 		
 		case 'q': //player leaving
 			System.out.println("I'm leaving");
+			if(players.size()>0) {
+				System.out.println(players.toString());
 			for (Player pl : players) {
 				if (pl.getName().equals(playerMessage[1])) {
 					updatePlayer(pl, pl.getXpos(), pl.getYpos(),
 							null);
-					players.remove(players.indexOf(pl));
+					break;
 				}
 			}
+			}
 			break;
-	}
+	}}
 	}
 	public static pair getRandomFreePosition() {
 		int x = 1;
@@ -177,6 +181,8 @@ public class ServerGame {
 	if(direction==null) {
 		System.out.println("me too");
 		me.setDirection(direction);
+
+//		players.remove(players.indexOf(me));
 		sendGameUpdate(me);
 	}
 		
