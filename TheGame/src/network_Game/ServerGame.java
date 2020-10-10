@@ -26,14 +26,20 @@ public class ServerGame {
 			Socket connectionSocket = talk.accept();
 			ServerThread st = (new ServerThread(connectionSocket));
 			st.start();
-			BombThread bt = new BombThread();
-			bt.start();
 		}
 	}
 
 	public static void sendGameUpdate(Player me) throws InterruptedException {
 		try {
 			String playerData = "";
+			if (me.getDirection() == null) { // new player, all players current status is send
+				System.out.println("also here");
+				for (Player p : players) {
+					playerData = "q" + "#" + me.getName() + "#" + me.getXpos() + "#" + me.getYpos();
+					p.getOutStream().writeBytes(playerData + '\n');
+				}
+			}
+			else{
 			if (me.getXposOld() == -2) { // new player, all players current status is send
 				for (Player p : players) {
 					playerData = "m" + "#" + p.getName() + "#" + p.getPoint() + "#" + 0 + "#" + 0 + "#" + p.getXpos()
@@ -42,12 +48,14 @@ public class ServerGame {
 				}
 			}
 			for (Player p : players) {
-				String s = "m" + "#" + me.getName() + "#" + me.getPoint() + "#" + me.getXposOld() + "#"
+				playerData = "m" + "#" + me.getName() + "#" + me.getPoint() + "#" + me.getXposOld() + "#"
 						+ me.getYposOld() + "#" + me.getXpos() + "#" + me.getYpos() + "#" + me.getDirection() + '\n';
-				p.getOutStream().writeBytes(s);
+				p.getOutStream().writeBytes(playerData);
+			}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("l-50 servergame");
+//			e.printStackTrace();
 		}
 	}
 
@@ -65,7 +73,8 @@ public class ServerGame {
 			try {
 				Thread.sleep(150); // Making the explosion visible, and a small lag--------------
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				System.out.println("l 69 servergame");
+//				e.printStackTrace();
 			}
 			for (Player p : players) {
 				String s = "w" + "#" + bomb.getXpos() + "#" + bomb.getYpos() + '\n';
@@ -85,6 +94,9 @@ public class ServerGame {
 
 	public static synchronized void play(String receiveString, DataOutputStream outToClient)
 			throws InterruptedException {
+//		if(receiveString == null) {
+////			System.out.println("tadahh");
+//		}else {
 		String[] playerMessage = receiveString.split("#");
 		String playerName;
 		playerName = playerMessage[1];
@@ -106,6 +118,9 @@ public class ServerGame {
 				pair p = getRandomFreePosition();
 				Player newPlayer = new Player(playerName, p.getX(), p.getY(), "up", outToClient);
 				players.add(newPlayer);
+				BombThread bt = new BombThread();
+				bt.start();
+				
 				sendGameUpdate(newPlayer);
 			}
 			break;
@@ -118,11 +133,21 @@ public class ServerGame {
 			}
 			break;
 		case 'b': // bomb exploding
-			updatePlayer(null, Integer.parseInt(playerMessage[1]), Integer.parseInt(playerMessage[2]), null);
+			updatePlayer(null, Integer.parseInt(playerMessage[1]), Integer.parseInt(playerMessage[2]), "here");
 			break;
-		}
+		
+		case 'q': //player leaving
+			System.out.println("I'm leaving");
+			for (Player pl : players) {
+				if (pl.getName().equals(playerMessage[1])) {
+					updatePlayer(pl, pl.getXpos(), pl.getYpos(),
+							null);
+					players.remove(players.indexOf(pl));
+				}
+			}
+			break;
 	}
-
+	}
 	public static pair getRandomFreePosition() {
 		int x = 1;
 		int y = 1;
@@ -149,7 +174,14 @@ public class ServerGame {
 
 	public synchronized static void updatePlayer(Player me, int delta_x, int delta_y, String direction)
 			throws InterruptedException {
-		if (me == null) { //call from bomb thread, using same method because of synchronizing
+	if(direction==null) {
+		System.out.println("me too");
+		me.setDirection(direction);
+		sendGameUpdate(me);
+	}
+		
+		
+		else if (me == null) { //call from bomb thread, using same method because of synchronizing
 			updatePlayerExploded(delta_x, delta_y);
 		} else {
 			me.setDirection(direction);

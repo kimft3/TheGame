@@ -24,14 +24,20 @@ public class ServerThread extends Thread {
 			inFromClient = new BufferedReader(new InputStreamReader(serverReceiverSocket.getInputStream()));
 			out = new DataOutputStream(serverReceiverSocket.getOutputStream());
 		} catch (IOException e1) {
+			System.out.println("her");
 			e1.printStackTrace();
 		}
-		while (true) {
+		boolean play=true;
+		while (play) {
 			try {
 				receiveString = inFromClient.readLine();
+				
 				ServerGame.play(receiveString, out);
 			} catch (IOException | InterruptedException e) {
-				e.printStackTrace();
+	
+				System.out.println("l-35 serverthread");
+				play=false;
+				
 			}
 		}
 	}
