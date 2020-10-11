@@ -53,8 +53,7 @@ public class ClientGame extends Application {
 		boolean nameNotValid = true;
 		String message = "Enter player name";
 		String reply = "";
-		
-		
+
 		while (nameNotValid) {
 			name = JOptionPane.showInputDialog(message);
 			clientSocket = new Socket("localhost", 12345);
@@ -62,7 +61,8 @@ public class ClientGame extends Application {
 			BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			try {
 				outToServer.writeBytes("j" + "#" + name + "#" + "" + "#" + "" + "#" + '\n');
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				e.printStackTrace();
 			}
 
@@ -72,10 +72,9 @@ public class ClientGame extends Application {
 				message = "enter a different name";
 			}
 			else {
-				
-				
+
 			}
-			}
+		}
 		ct = new ClientThread(clientSocket);
 		ct.start();
 		launch(args);
@@ -85,17 +84,18 @@ public class ClientGame extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		primaryStage.setOnCloseRequest((event) -> {
-	    System.out.println("Closing Stage");
-	    sendString = "q" + "#" + name + '\n';
+			System.out.println("Closing Stage");
+			sendString = "q" + "#" + name + '\n';
 			try {
 				outToServer.writeBytes(sendString);
 				ct.stop();
-			
-			} catch (IOException e) {
+
+			}
+			catch (IOException e) {
 				e.printStackTrace();
 			}
 			System.exit(1);
-	});
+		});
 		try {
 			GridPane grid = new GridPane();
 			grid.setHgap(10);
@@ -113,16 +113,12 @@ public class ClientGame extends Application {
 			GridPane boardGrid = new GridPane();
 
 			image_wall = new Image(getClass().getResourceAsStream("../game/Image/wall4.png"), size, size, false, false);
-			image_floor = new Image(getClass().getResourceAsStream("../game/Image/floor1.png"), size, size, false,
-					false);
+			image_floor = new Image(getClass().getResourceAsStream("../game/Image/floor1.png"), size, size, false, false);
 
-			hero_right = new Image(getClass().getResourceAsStream("../game/Image/heroRight.png"), size, size, false,
-					false);
-			hero_left = new Image(getClass().getResourceAsStream("../game/Image/heroLeft.png"), size, size, false,
-					false);
+			hero_right = new Image(getClass().getResourceAsStream("../game/Image/heroRight.png"), size, size, false, false);
+			hero_left = new Image(getClass().getResourceAsStream("../game/Image/heroLeft.png"), size, size, false, false);
 			hero_up = new Image(getClass().getResourceAsStream("../game/Image/heroUp.png"), size, size, false, false);
-			hero_down = new Image(getClass().getResourceAsStream("../game/Image/heroDown.png"), size, size, false,
-					false);
+			hero_down = new Image(getClass().getResourceAsStream("../game/Image/heroDown.png"), size, size, false, false);
 			bomb = new Image(getClass().getResourceAsStream("../game/Image/Package.png"), size, size, false, false);
 			explode = new Image(getClass().getResourceAsStream("../game/Image/packBomb.png"), size, size, false, false);
 
@@ -158,28 +154,32 @@ public class ClientGame extends Application {
 				case UP:
 					try {
 						playerMoved(0, -1, "up");
-					} catch (InterruptedException e) {
+					}
+					catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 					break;
 				case DOWN:
 					try {
 						playerMoved(0, +1, "down");
-					} catch (InterruptedException e) {
+					}
+					catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 					break;
 				case LEFT:
 					try {
 						playerMoved(-1, 0, "left");
-					} catch (InterruptedException e) {
+					}
+					catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 					break;
 				case RIGHT:
 					try {
 						playerMoved(+1, 0, "right");
-					} catch (InterruptedException e) {
+					}
+					catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 					break;
@@ -188,7 +188,8 @@ public class ClientGame extends Application {
 				}
 			});
 
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -245,7 +246,8 @@ public class ClientGame extends Application {
 		sendString = "m" + "#" + name + "#" + delta_x + "#" + delta_y + "#" + direction + "#" + counter + '\n';
 		try {
 			outToServer.writeBytes(sendString);
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -260,14 +262,17 @@ public class ClientGame extends Application {
 
 	public static void updateScore(String name, String score) {
 		if (!playerScore.containsKey(name)) {
-			
+
 			playerScore.put(name, score);
-		} else {
-if(score==null) {
+		}
+		else {
+			if (score == null) {
 				playerScore.remove(name);
-			}else {
-			playerScore.replace(name, score);
-		}}
+			}
+			else {
+				playerScore.replace(name, score);
+			}
+		}
 		updateScoreTable();
 	}
 

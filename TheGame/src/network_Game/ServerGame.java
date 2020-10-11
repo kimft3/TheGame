@@ -34,28 +34,30 @@ public class ServerGame {
 			String playerData = "";
 			if (me.getDirection() == null) { // player quitting
 				players.remove(players.indexOf(me));
-				if(players.size()>0) { // The above line could be the last player
-				for (Player p : players) {
-					playerData = "q" + "#" + me.getName() + "#" + me.getXpos() + "#" + me.getYpos();
-					p.getOutStream().writeBytes(playerData + '\n');
-				}}
-			}
-			else{
-			if (me.getXposOld() == -2) { // new player, all players current status is send
-				for (Player p : players) {
-					playerData = "m" + "#" + p.getName() + "#" + p.getPoint() + "#" + 0 + "#" + 0 + "#" + p.getXpos()
-							+ "#" + p.getYpos() + "#" + p.getDirection();
-					me.getOutStream().writeBytes(playerData + '\n');
+				if (players.size() > 0) { // The above line could be the last player
+					for (Player p : players) {
+						playerData = "q" + "#" + me.getName() + "#" + me.getXpos() + "#" + me.getYpos();
+						p.getOutStream().writeBytes(playerData + '\n');
+					}
 				}
 			}
-			for (Player p : players) {
-				playerData = "m" + "#" + me.getName() + "#" + me.getPoint() + "#" + me.getXposOld() + "#"
-						+ me.getYposOld() + "#" + me.getXpos() + "#" + me.getYpos() + "#" + me.getDirection() + '\n';
-				p.getOutStream().writeBytes(playerData);
+			else {
+				if (me.getXposOld() == -2) { // new player, all players current status is send
+					for (Player p : players) {
+						playerData = "m" + "#" + p.getName() + "#" + p.getPoint() + "#" + 0 + "#" + 0 + "#" + p.getXpos() + "#"
+						  + p.getYpos() + "#" + p.getDirection();
+						me.getOutStream().writeBytes(playerData + '\n');
+					}
+				}
+				for (Player p : players) {
+					playerData = "m" + "#" + me.getName() + "#" + me.getPoint() + "#" + me.getXposOld() + "#" + me.getYposOld()
+					  + "#" + me.getXpos() + "#" + me.getYpos() + "#" + me.getDirection() + '\n';
+					p.getOutStream().writeBytes(playerData);
+				}
 			}
-			}
-		} catch (IOException e) {
-			System.out.println("l-50 servergame");
+		}
+		catch (IOException e) {
+			System.out.println("l-60 servergame");
 //			e.printStackTrace();
 		}
 	}
@@ -66,15 +68,17 @@ public class ServerGame {
 				String s = "b" + "#" + bomb.getXpos() + "#" + bomb.getYpos() + '\n';
 				p.getOutStream().writeBytes(s);
 			}
-		} else {
+		}
+		else {
 			for (Player p : players) {
 				String s = "e" + "#" + bomb.getXpos() + "#" + bomb.getYpos() + '\n';
 				p.getOutStream().writeBytes(s);
 			}
 			try {
 				Thread.sleep(150); // Making the explosion visible, and a small lag--------------
-			} catch (InterruptedException e) {
-				System.out.println("l 69 servergame");
+			}
+			catch (InterruptedException e) {
+				System.out.println("l 81 servergame");
 //				e.printStackTrace();
 			}
 			for (Player p : players) {
@@ -93,63 +97,66 @@ public class ServerGame {
 		return true;
 	}
 
-	public static synchronized void play(String receiveString, DataOutputStream outToClient)
-			throws InterruptedException {
-		if(receiveString == null) {
-//			System.out.println("tadahh");
-		}else {
-		String[] playerMessage = receiveString.split("#");
-		String playerName;
-		playerName = playerMessage[1];
-		char id = playerMessage[0].charAt(0);
-		switch (id) {
-		case 'j': //new player j(oining)
-			if (!isNameUnique(playerName)) {
-				try {
-					(outToClient).writeBytes("Name is taken" + '\n');
-				} catch (IOException e) {
-					e.printStackTrace();
+	public static synchronized void play(String receiveString, DataOutputStream outToClient) throws InterruptedException {
+		if (receiveString == null) { // needs this because of som calls with null, not sure why
+			// do nothing
+		}
+		else {
+			String[] playerMessage = receiveString.split("#");
+			String playerName;
+			playerName = playerMessage[1];
+			char id = playerMessage[0].charAt(0);
+			switch (id) {
+			case 'j': // new player j(oining)
+				if (!isNameUnique(playerName)) {
+					try {
+						(outToClient).writeBytes("Name is taken" + '\n');
+					}
+					catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
-			} else {
-				try {
-					(outToClient).writeBytes("Good to go" + '\n');
-				} catch (IOException e) {
-					e.printStackTrace();
+				else {
+					try {
+						(outToClient).writeBytes("Good to go" + '\n');
+					}
+					catch (IOException e) {
+						e.printStackTrace();
+					}
+					pair p = getRandomFreePosition();
+					Player newPlayer = new Player(playerName, p.getX(), p.getY(), "up", outToClient);
+					BombThread bt = new BombThread();
+					bt.start();
+					players.add(newPlayer);
+
+					sendGameUpdate(newPlayer);
 				}
-				pair p = getRandomFreePosition();
-				Player newPlayer = new Player(playerName, p.getX(), p.getY(), "up", outToClient);
-				BombThread bt = new BombThread();
-				bt.start();
-				players.add(newPlayer);
-				
-				sendGameUpdate(newPlayer);
-			}
-			break;
-		case 'm': //player m(oving)
-			for (Player pl : players) {
-				if (pl.getName().equals(playerMessage[1])) {
-					updatePlayer(pl, Integer.parseInt(playerMessage[2]), Integer.parseInt(playerMessage[3]),
-							playerMessage[4]);
+				break;
+			case 'm': // player m(oving)
+				for (Player pl : players) {
+					if (pl.getName().equals(playerMessage[1])) {
+						updatePlayer(pl, Integer.parseInt(playerMessage[2]), Integer.parseInt(playerMessage[3]), playerMessage[4]);
+					}
 				}
-			}
-			break;
-		case 'b': // bomb exploding
-			updatePlayer(null, Integer.parseInt(playerMessage[1]), Integer.parseInt(playerMessage[2]), "here");
-			break;
-		
-		case 'q': //player leaving
-			if(players.size()>0) {
-			for (Player pl : players) {
-				if (pl.getName().equals(playerMessage[1])) {
-					updatePlayer(pl, pl.getXpos(), pl.getYpos(),
-							null);
-					break;
+				break;
+			case 'b': // bomb exploding
+				updatePlayer(null, Integer.parseInt(playerMessage[1]), Integer.parseInt(playerMessage[2]), "here");
+				break;
+
+			case 'q': // player leaving
+				if (players.size() > 0) {
+					for (Player pl : players) {
+						if (pl.getName().equals(playerMessage[1])) {
+							updatePlayer(pl, pl.getXpos(), pl.getYpos(), null);
+							break;
+						}
+					}
 				}
+				break;
 			}
-			}
-			break;
-	}}
+		}
 	}
+
 	public static pair getRandomFreePosition() {
 		int x = 1;
 		int y = 1;
@@ -175,24 +182,26 @@ public class ServerGame {
 	}
 
 	public synchronized static void updatePlayer(Player me, int delta_x, int delta_y, String direction)
-			throws InterruptedException {
-	if(direction==null) {
-		me.setDirection(direction);
-		sendGameUpdate(me);
-	}
-		
-		
-		else if (me == null) { //call from bomb thread, using same method because of synchronizing
+	  throws InterruptedException {
+		if (direction == null) {
+			me.setDirection(direction);
+			sendGameUpdate(me);
+		}
+
+		else if (me == null) { // call from bomb thread, using same method because of synchronizing
 			updatePlayerExploded(delta_x, delta_y);
-		} else {
+		}
+		else {
 			me.setDirection(direction);
 			int x = me.getXpos(), y = me.getYpos();
 			Bomb b = getBombAt(x + delta_x, y + delta_y);
 			if (Generel.board[y + delta_y].charAt(x + delta_x) == 'w') {
 				me.addPoints(-1);
-			} else if (b != null) {
+			}
+			else if (b != null) {
 				// do nothing-------------------------------
-			} else {
+			}
+			else {
 				Player p = getPlayerAt(x + delta_x, y + delta_y);
 				if (p != null) {
 					me.addPoints(10);
@@ -203,7 +212,8 @@ public class ServerGame {
 					p.setXposOld(-1);
 					p.setYposOld(-1);
 					sendGameUpdate(p);
-				} else {
+				}
+				else {
 					me.addPoints(1);
 				}
 				me.setXpos(x + delta_x);
